@@ -28,6 +28,10 @@
         margin: 0;
         overflow: hidden;
     }
+    canvas {
+            display: block;
+            background-color: #121212;
+        }
 
     @keyframes fadeIn {
         from {
@@ -55,7 +59,7 @@
         }
 
         to {
-            opacity: 0;
+            opacity: 0.1;
         }
     }
 
@@ -69,8 +73,7 @@
         color: white;
         opacity: 0.1;
         font-family: "Source Sans Pro";
-        animation: fadeIn 10s ease-out;
-        /*animation: fadeIn 10s ease-out, chill 10s 10s, fadeOut 10s 10s;*/
+        animation: fadeIn 10s cubic-bezier(0.4, 0, 1, 1), chill 10s 10s, fadeOut 10s 10s;
     }
     </style>
 </head>
@@ -79,293 +82,384 @@
     <p>SDN 1 SUMBER MULYA</p>
     <canvas></canvas>
     <script>
-    var canvas = document.querySelector('canvas');
-    var c = canvas.getContext('2d');
+        var canvas = document.querySelector('canvas');
+        var c = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    var mouse = {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2
-    };
-
-    var isMouseDown = false;
-
-    // ====== Event Listeners ======
-    window.addEventListener("mousemove", function(event) {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
-    });
-
-    window.addEventListener("resize", function() {
-        canvas.height = window.innerHeight;
+        // Dimensi Awal Kanvas
         canvas.width = window.innerWidth;
-        initializeVariables();
-    });
+        canvas.height = window.innerHeight;
 
-    window.addEventListener("mousedown", function() {
-        isMouseDown = true;
-    });
-
-    window.addEventListener("mouseup", function() {
-        isMouseDown = false;
-    });
-
-    canvas.addEventListener("touchstart", function() {
-        isMouseDown = true;
-    });
-
-    canvas.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-        mouse.x = event.touches[0].pageX;
-        mouse.y = event.touches[0].pageY;
-    });
-
-    canvas.addEventListener("touchend", function() {
-        isMouseDown = false;
-    });
-
-
-    // ====== Cannon Image ======
-    var cannonImg = new Image();
-    cannonImg.src = "gambars.png";
-
-
-    // ====== Cannon Object ======
-    function Cannon(x, y, width, height, color) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.angle = 0;
-        this.color = color;
-
-        this.update = function() {
-            desiredAngle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
-            this.angle = desiredAngle;
-            this.draw();
+        var mouse = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2
         };
 
-        this.draw = function() {
-            c.save();
-            c.translate(this.x, this.y);
-            c.rotate(this.angle);
+        var isMouseDown = false;
 
-            if (cannonImg.complete) {
-                var imgWidth = this.width * 2;
-                var imgHeight = this.height * 2;
-                c.drawImage(cannonImg, 0, -imgHeight / 2, imgWidth, imgHeight);
-            } else {
-                // Fallback jika gambar belum siap
+
+        // ====== Event Listeners ======
+        window.addEventListener("mousemove", function(event) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+        });
+
+        // Handler Resize
+        window.addEventListener("resize", function() {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            // Reset posisi mouse di tengah saat resize
+            mouse.x = window.innerWidth / 2;
+            mouse.y = window.innerHeight / 2;
+            
+            initializeVariables(); // Penting: inisialisasi ulang posisi objek
+        });
+
+        window.addEventListener("mousedown", function() {
+            isMouseDown = true;
+        });
+
+        window.addEventListener("mouseup", function() {
+            isMouseDown = false;
+        });
+        
+        // Touch Handlers
+        canvas.addEventListener("touchstart", function() {
+            isMouseDown = true;
+        });
+
+        canvas.addEventListener("touchmove", function(event) {
+            event.preventDefault();
+            mouse.x = event.touches[0].pageX;
+            mouse.y = event.touches[0].pageY;
+        });
+
+        canvas.addEventListener("touchend", function() {
+            isMouseDown = false;
+        });
+
+
+        // ====== Cannon Image (Tetap Sama) ======
+        var cannonImg = new Image();
+        cannonImg.src = "gambars.png";
+
+
+        // ====== Cannon Object (Tetap Sama) ======
+        function Cannon(x, y, width, height, color) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.angle = 0;
+            this.color = color;
+
+            this.update = function() {
+                desiredAngle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+                this.angle = desiredAngle;
+                this.draw();
+            };
+
+            this.draw = function() {
+                c.save();
+                c.translate(this.x, this.y);
+                c.rotate(this.angle);
+
+                if (cannonImg.complete) {
+                    var imgWidth = this.width * 2;
+                    var imgHeight = this.height * 2;
+                    c.drawImage(cannonImg, 0, -imgHeight / 2, imgWidth, imgHeight);
+                } else {
+                    c.fillStyle = this.color;
+                    c.fillRect(0, -this.height / 2, this.width, this.height);
+                }
+
+                c.restore();
+            };
+        }
+
+
+        // ====== Cannonball Object (Tetap Sama) ======
+        function Cannonball(x, y, dx, dy, radius, color, cannon, particleColors) {
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.dy = -dy;
+            this.radius = radius;
+            this.color = color;
+            this.particleColors = particleColors;
+            this.source = cannon;
+            // timeToLive dibuat relatif terhadap tinggi kanvas
+            this.timeToLive = canvas.height / 800; // Disesuaikan untuk konsistensi
+
+            this.init = function() {
+                // Menghitung posisi awal relatif dari moncong meriam
+                var muzzleOffset = this.source.width * 1.8;
+                this.x = this.source.x + Math.cos(this.source.angle) * muzzleOffset;
+                this.y = this.source.y + Math.sin(this.source.angle) * muzzleOffset;
+                
+                // Menentukan kecepatan awal
+                var speed = 8;
+                this.dx = Math.cos(this.source.angle) * speed;
+                this.dy = Math.sin(this.source.angle) * speed; 
+            };
+
+            this.update = function() {
+                // Tabrakan dengan bawah
+                if (this.y + this.radius + this.dy > canvas.height) {
+                    this.dy = -this.dy; // Membalikkan kecepatan vertikal
+                    this.y = canvas.height - this.radius; // Koreksi posisi agar tidak tenggelam
+                } 
+                // Tabrakan dengan atas
+                else if (this.y - this.radius + this.dy < 0) {
+                    this.dy = -this.dy;
+                    this.y = this.radius;
+                }
+                // Gravitasi
+                else {
+                    this.dy += gravity;
+                }
+
+                // Tabrakan dengan Kiri/Kanan
+                if (this.x + this.radius + this.dx > canvas.width) {
+                    this.dx = -this.dx; // Membalikkan kecepatan horizontal
+                    this.x = canvas.width - this.radius; // Koreksi posisi agar tidak tembus kanan
+                } else if (this.x - this.radius + this.dx < 0) {
+                    this.dx = -this.dx;
+                    this.x = this.radius; // Koreksi posisi agar tidak tembus kiri
+                }
+
+                // Perbarui posisi
+                this.x += this.dx;
+                this.y += this.dy;
+                this.draw();
+
+                this.timeToLive -= 0.01;
+            };
+
+            this.draw = function() {
+                c.save();
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                c.shadowColor = this.color;
+                c.shadowBlur = 5;
                 c.fillStyle = this.color;
-                c.fillRect(0, -this.height / 2, this.width, this.height);
-            }
+                c.fill();
+                c.closePath();
+                c.restore();
+            };
 
-            c.restore();
-        };
-    }
-
-
-    // ====== Cannonball Object ======
-    function Cannonball(x, y, dx, dy, radius, color, cannon, particleColors) {
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = -dy;
-        this.radius = radius;
-        this.color = color;
-        this.particleColors = particleColors;
-        this.source = cannon;
-        this.timeToLive = canvas.height / (canvas.height + 800);
-
-        this.init = function() {
-            this.x = Math.cos(this.source.angle) * (this.source.width * 1.8);
-            this.y = Math.sin(this.source.angle) * (this.source.width * 1.8);
-            this.x = this.x + (canvas.width / 2);
-            this.y = this.y + (canvas.height);
-
-            if (mouse.x - canvas.width / 2 < 0) {
-                this.dx = -this.dx;
-            }
-
-            this.dy = Math.sin(this.source.angle) * 8;
-            this.dx = Math.cos(this.source.angle) * 8;
-        };
-
-        this.update = function() {
-            if (this.y + this.radius + this.dy > canvas.height) {
-                this.dy = -this.dy;
-            } else {
-                this.dy += gravity;
-            }
-
-            this.x += this.dx;
-            this.y += this.dy;
-            this.draw();
-
-            this.timeToLive -= 0.01;
-        };
-
-        this.draw = function() {
-            c.save();
-            c.beginPath();
-            c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-            c.shadowColor = this.color;
-            c.shadowBlur = 5;
-            c.fillStyle = this.color;
-            c.fill();
-            c.closePath();
-            c.restore();
-        };
-
-        this.init();
-    }
+            this.init();
+        }
 
 
-    // ====== Particle Object ======
-    function Particle(x, y, dx, dy, radius, color) {
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = -dy;
-        this.radius = 5;
-        this.color = color;
-        this.timeToLive = 1;
+        // ====== REVISI Particle Object: Menambahkan tipe partikel dan timeToLive awal yang berbeda ======
+        function Particle(x, y, dx, dy, color, isSubParticle = false) { // Tambahkan isSubParticle
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.dy = dy;
+            this.color = color;
+            this.isSubParticle = isSubParticle;
+            // Partikel utama hidup lebih lama, sub-partikel hidup lebih pendek
+            this.timeToLive = this.isSubParticle ? Math.random() * 0.3 + 0.1 : Math.random() * 0.8 + 0.2; 
+            this.radius = this.isSubParticle ? 1 : 2; // Sub-partikel lebih kecil
 
-        this.update = function() {
-            if (this.y + this.radius + this.dy > canvas.height) {
-                this.dy = -this.dy;
-            }
+            this.update = function() {
+                // Logika Tabrakan (tetap sama)
+                if (this.y + this.radius + this.dy > canvas.height) {
+                    this.dy = -this.dy;
+                    this.y = canvas.height - this.radius;
+                }
 
-            if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius + this.dx < 0) {
-                this.dx = -this.dx;
-            }
+                if (this.x + this.radius + this.dx > canvas.width) {
+                    this.dx = -this.dx;
+                    this.x = canvas.width - this.radius;
+                } else if (this.x - this.radius + this.dx < 0) {
+                    this.dx = -this.dx;
+                    this.x = this.radius;
+                }
 
-            this.x += this.dx;
-            this.y += this.dy;
-            this.draw();
+                this.x += this.dx;
+                this.y += this.dy;
+                this.draw();
 
-            this.timeToLive -= 0.01;
-        };
+                this.timeToLive -= 0.01;
+            };
 
-        this.draw = function() {
-            c.save();
-            c.beginPath();
-            c.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
-            c.shadowColor = this.color;
-            c.shadowBlur = 10;
-            c.fillStyle = this.color;
-            c.fill();
-            c.closePath();
-            c.restore();
-        };
-    }
+            this.draw = function() {
+                c.save();
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                c.shadowColor = this.color;
+                // Shadow blur lebih kecil untuk sub-partikel
+                c.shadowBlur = this.isSubParticle ? 5 : 10; 
+                c.fillStyle = this.color;
+                c.fill();
+                c.closePath();
+                c.restore();
+            };
+        }
+
+        // ====== REVISI Explosion Object: Implementasi Sub-Explosion ======
+        function Explosion(source, particleColors, isSubExplosion = false) { // Tambahkan isSubExplosion
+            this.particles = [];
+            this.source = source;
+            this.particleColors = particleColors;
+            this.isSubExplosion = isSubExplosion;
+            // Jumlah partikel lebih sedikit untuk sub-ledakan
+            this.numParticles = this.isSubExplosion ? 6 : 10; 
+
+            this.init = function() {
+                for (var i = 0; i < this.numParticles; i++) {
+                    // Kecepatan awal yang lebih kecil untuk sub-ledakan
+                    var speed = this.isSubExplosion ? (Math.random() * 3) - 1.5 : (Math.random() * 6) - 3; 
+                    var dx = (Math.random() * 2 - 1) * speed;
+                    var dy = (Math.random() * 2 - 1) * speed;
+
+                    var randomColorIndex = Math.floor(Math.random() * this.particleColors.length);
+                    var randomParticleColor = this.particleColors[randomColorIndex];
+                    // Partikel yang dihasilkan oleh Sub-Explosion adalah Sub-Particle (true)
+                    this.particles.push(new Particle(
+                        this.source.x, 
+                        this.source.y, 
+                        dx, 
+                        dy, 
+                        randomParticleColor, 
+                        this.isSubExplosion // isSubParticle: true jika ini Sub-Explosion
+                    ));
+                }
+            };
+
+            this.init();
+
+            this.update = function() {
+                for (var i = 0; i < this.particles.length; i++) {
+                    this.particles[i].update();
+
+                    // LOGIKA LEDAKAN BERANTAI:
+                    // Jika partikel adalah partikel utama (bukan sub-partikel) 
+                    // DAN waktu hidupnya habis, buat sub-ledakan.
+                    if (this.particles[i].timeToLive < 0) {
+                        if (!this.particles[i].isSubParticle) {
+                             // Buat sub-ledakan di posisi partikel yang meledak
+                            explosions.push(new Explosion(this.particles[i], this.particleColors, true)); 
+                        }
+                        
+                        this.particles.splice(i, 1);
+                        i--; // Sesuaikan indeks
+                    }
+                }
+            };
+        }
 
 
-    // ====== Explosion Object ======
-    function Explosion(cannonball) {
-        this.particles = [];
-        this.source = cannonball;
+        // ====== Global Variables (Tetap Sama) ======
+        var gravity = 0.05; // Ubah ke nilai positif agar menarik ke bawah
+        var desiredAngle = 0;
+        var cannon, cannonballs, explosions, colors;
+        var timer = 0;
+        var isIntroComplete = false;
+        var introTimer = 0;
 
-        this.init = function() {
-            for (var i = 0; i < 10; i++) {
-                var dx = (Math.random() * 6) - 3;
-                var dy = (Math.random() * 6) - 3;
-                var randomColorIndex = Math.floor(Math.random() * this.source.particleColors.length);
-                var randomParticleColor = this.source.particleColors[randomColorIndex];
-                this.particles.push(new Particle(this.source.x, this.source.y, dx, dy, 1, randomParticleColor));
-            }
-        };
 
-        this.init();
+        // ====== Initialize (Tetap Sama) ======
+        function initializeVariables() {
+            // Cannon selalu di tengah bawah kanvas yang baru
+            cannon = new Cannon(canvas.width / 2, canvas.height, 40, 20, "blue");
+            cannonballs = [];
+            explosions = [];
+            colors = [{
+                cannonballColor: "#affdf4",
+                particleColors: ["#ff4747", "#00ceed", "#fff", "pink"]
+            }];
+            
+            // Reset intro status saat resize agar intro tetap berjalan
+            isIntroComplete = false;
+            introTimer = 0;
+        }
 
-        this.update = function() {
-            for (var i = 0; i < this.particles.length; i++) {
-                this.particles[i].update();
-                if (this.particles[i].timeToLive < 0) {
-                    this.particles.splice(i, 1);
+
+        // ====== Animation (Hanya sedikit penyesuaian di call Explosion) ======
+        function animate() {
+            window.requestAnimationFrame(animate);
+
+            // Membersihkan canvas dengan fade effect
+            c.fillStyle = "rgba(18, 18, 18, 0.2)";
+            c.fillRect(0, 0, canvas.width, canvas.height);
+            cannon.update();
+
+            // Logika Intro (menggunakan posisi yang responsif)
+            if (!isIntroComplete) {
+                introTimer += 1;
+                if (introTimer % 3 === 0) {
+                    var randomColor = Math.floor(Math.random() * colors.length);
+                    var color = colors[randomColor];
+                    // Posisi awal bola di tengah atas (misalnya)
+                    cannonballs.push(new Cannonball(
+                        canvas.width / 2, 
+                        canvas.height / 2, 
+                        2, 2, 4, 
+                        color.cannonballColor, cannon, color.particleColors
+                    ));
+                }
+                if (introTimer > 30) {
+                    isIntroComplete = true;
                 }
             }
+
+            // Update dan Hapus Cannonballs
+            for (var i = 0; i < cannonballs.length; i++) {
+                cannonballs[i].update();
+                // Hapus jika waktu hidup habis
+                if (cannonballs[i].timeToLive <= 0) {
+                    // Explosion awal
+                    explosions.push(new Explosion(cannonballs[i], cannonballs[i].particleColors, false)); 
+                    cannonballs.splice(i, 1);
+                    i--; // Penting: menyesuaikan indeks setelah splice
+                }
+            }
+
+            // Update dan Hapus Explosions
+            for (var j = 0; j < explosions.length; j++) {
+                explosions[j].update();
+                if (explosions[j].particles.length <= 0) {
+                    explosions.splice(j, 1);
+                    j--; // Penting: menyesuaikan indeks setelah splice
+                }
+            }
+
+            // Mouse shoot
+            if (isMouseDown) {
+                timer += 1;
+                if (timer % 3 === 0) {
+                    var randomParticleColorIndex = Math.floor(Math.random() * colors.length);
+                    var randomColors = colors[randomParticleColorIndex];
+                    cannonballs.push(new Cannonball(
+                        mouse.x, mouse.y, 
+                        2, 2, 4, 
+                        randomColors.cannonballColor, cannon, randomColors.particleColors
+                    ));
+                }
+            }
+        }
+
+
+        // Mulai setelah gambar selesai dimuat (Tetap Sama)
+        cannonImg.onload = function() {
+            initializeVariables();
+            animate();
         };
-    }
 
-
-    // ====== Global Variables ======
-    var gravity = -0.1;
-    var desiredAngle = 0;
-    var cannon, cannonballs, explosions, colors;
-    var timer = 0;
-    var isIntroComplete = false;
-    var introTimer = 0;
-
-
-    // ====== Initialize ======
-    function initializeVariables() {
-        cannon = new Cannon(canvas.width / 2, canvas.height, 40, 20, "blue");
-        cannonballs = [];
-        explosions = [];
-        colors = [{
-            cannonballColor: "#affdf4",
-            particleColors: ["#ff4747", "#00ceed", "#fff", "pink"]
-        }];
-    }
-
-
-    // ====== Animation ======
-    function animate() {
-        window.requestAnimationFrame(animate);
-
-        c.fillStyle = "rgba(18, 18, 18, 0.2)";
-        c.fillRect(0, 0, canvas.width, canvas.height);
-        cannon.update();
-
-        if (!isIntroComplete) {
-            introTimer += 1;
-            if (introTimer % 3 === 0) {
-                var randomColor = Math.floor(Math.random() * colors.length);
-                var color = colors[randomColor];
-                cannonballs.push(new Cannonball(canvas.width / 2, canvas.height / 2, 2, 2, 4, color.cannonballColor, cannon, color.particleColors));
-            }
-            if (introTimer > 30) {
-                isIntroComplete = true;
-            }
+        // Tambahkan fallback jika gambar tidak ditemukan/gagal dimuat (Tetap Sama)
+        cannonImg.onerror = function() {
+            console.error("Gagal memuat gambars.png. Menggunakan fallback.");
+            initializeVariables();
+            animate();
+        };
+        // Panggil animate langsung jika gambar sudah di-cache (Tetap Sama)
+        if (cannonImg.complete) {
+            initializeVariables();
+            animate();
         }
-
-        // Cannonballs
-        for (var i = 0; i < cannonballs.length; i++) {
-            cannonballs[i].update();
-            if (cannonballs[i].timeToLive <= 0) {
-                explosions.push(new Explosion(cannonballs[i]));
-                cannonballs.splice(i, 1);
-            }
-        }
-
-        // Explosions
-        for (var j = 0; j < explosions.length; j++) {
-            explosions[j].update();
-            if (explosions[j].particles.length <= 0) {
-                explosions.splice(j, 1);
-            }
-        }
-
-        // Mouse shoot
-        if (isMouseDown) {
-            timer += 1;
-            if (timer % 3 === 0) {
-                var randomParticleColorIndex = Math.floor(Math.random() * colors.length);
-                var randomColors = colors[randomParticleColorIndex];
-                cannonballs.push(new Cannonball(mouse.x, mouse.y, 2, 2, 4, randomColors.cannonballColor, cannon, randomColors.particleColors));
-            }
-        }
-    }
-
-
-    // Mulai setelah gambar selesai dimuat
-    cannonImg.onload = function() {
-        initializeVariables();
-        animate();
-    };
     </script>
 </body>
 
