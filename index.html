@@ -76,6 +76,32 @@
         font-family: "Source Sans Pro";
         animation: fadeIn 10s cubic-bezier(0.4, 0, 1, 1), chill 10s 10s, fadeOut 10s 10s;
     }
+
+    @media screen and (min-width: 300px) {
+        p {
+            font-size: .9rem;
+        }
+    }
+    @media screen and (min-width: 576px) {
+        p {
+            font-size: 1.5rem;
+        }
+    }
+    @media screen and (min-width: 768px) {
+        p {
+            font-size: 2.5rem;
+        }
+    }
+    @media screen and (min-width: 992px) {
+        p {
+            font-size: 2.5rem;
+        }
+    }
+    @media screen and (min-width: 1200px) {
+        p {
+            font-size: 3.5rem;
+        }
+    }
     </style>
 </head>
 
@@ -291,13 +317,21 @@
         };
 
         this.update = function() {
-            if (this.y + this.radius + this.dy > canvas.height) { this.dy = -this.dy;
-                this.y = canvas.height - this.radius; } else if (this.y - this.radius + this.dy < 0) { this.dy = -this.dy;
-                this.y = this.radius; } else { this.dy += gravity; }
+            if (this.y + this.radius + this.dy > canvas.height) {
+                this.dy = -this.dy;
+                this.y = canvas.height - this.radius;
+            } else if (this.y - this.radius + this.dy < 0) {
+                this.dy = -this.dy;
+                this.y = this.radius;
+            } else { this.dy += gravity; }
 
-            if (this.x + this.radius + this.dx > canvas.width) { this.dx = -this.dx;
-                this.x = canvas.width - this.radius; } else if (this.x - this.radius + this.dx < 0) { this.dx = -this.dx;
-                this.x = this.radius; }
+            if (this.x + this.radius + this.dx > canvas.width) {
+                this.dx = -this.dx;
+                this.x = canvas.width - this.radius;
+            } else if (this.x - this.radius + this.dx < 0) {
+                this.dx = -this.dx;
+                this.x = this.radius;
+            }
 
             this.x += this.dx;
             this.y += this.dy;
@@ -332,11 +366,17 @@
         this.radius = this.isSubParticle ? 1 : 2;
 
         this.update = function() {
-            if (this.y + this.radius + this.dy > canvas.height) { this.dy = -this.dy;
-                this.y = canvas.height - this.radius; }
-            if (this.x + this.radius + this.dx > canvas.width) { this.dx = -this.dx;
-                this.x = canvas.width - this.radius; } else if (this.x - this.radius + this.dx < 0) { this.dx = -this.dx;
-                this.x = this.radius; }
+            if (this.y + this.radius + this.dy > canvas.height) {
+                this.dy = -this.dy;
+                this.y = canvas.height - this.radius;
+            }
+            if (this.x + this.radius + this.dx > canvas.width) {
+                this.dx = -this.dx;
+                this.x = canvas.width - this.radius;
+            } else if (this.x - this.radius + this.dx < 0) {
+                this.dx = -this.dx;
+                this.x = this.radius;
+            }
             this.x += this.dx;
             this.y += this.dy;
             this.draw();
