@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,608 +21,1251 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:label1" content="Estimasi waktu membaca" />
     <meta name="twitter:data1" content="5 menit" />
-    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root {
-            --primary-color: #FF6B6B;
-            --secondary-color: #4ECDC4;
-            --accent-color: #00a9de;
-            --purple-color: #A8E6CF;
-            --pink-color: #FFB6C1;
-            --orange-color: #FFA07A;
-            --green-color: #95E77E;
-            --blue-color: #87CEEB;
-            --text-color: #2D3436;
-            --white-color: #FFFFFF;
-            --light-bg: #FFF5F5;
-            --transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Baloo 2', cursive;
-            line-height: 1.6;
-            color: var(--text-color);
-            background: linear-gradient(135deg, #FFF5F5 0%, #F0F8FF 50%, #FFF0F5 100%);
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Floating Bubbles Background */
-        .bubbles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
-            border-radius: 50%;
-            opacity: 0.6;
-            animation: float 15s infinite ease-in;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) translateX(0) scale(1); }
-            50% { transform: translateY(-100vh) translateX(100px) scale(1.2); }
-            100% { transform: translateY(-200vh) translateX(-100px) scale(0.8); }
-        }
-        
-        html { scroll-behavior: smooth; }
-        
-        /* Navbar Styles */
-        .navbar {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            padding: 0.1rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
-            border-bottom: 5px solid var(--accent-color);
-        }
-        
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            font-family: 'Fredoka', cursive;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--white-color);
-            text-decoration: none;
-            animation: bounce 2s infinite;
-            gap: 0.2rem;
+    :root {
+        --primary-color: #FF6B6B;
+        --secondary-color: #4ECDC4;
+        --accent-color: #00a9de;
+        --purple-color: #A8E6CF;
+        --pink-color: #FFB6C1;
+        --orange-color: #FFA07A;
+        --green-color: #95E77E;
+        --blue-color: #87CEEB;
+        --text-color: #2D3436;
+        --white-color: #FFFFFF;
+        --light-bg: #FFF5F5;
+        --transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Baloo 2', cursive;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #FFF5F5 0%, #F0F8FF 50%, #FFF0F5 100%);
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Floating Bubbles Background */
+    .bubbles {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .bubble {
+        position: absolute;
+        bottom: -100px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+        border-radius: 50%;
+        opacity: 0.6;
+        animation: float 15s infinite ease-in;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) translateX(0) scale(1);
         }
 
-        .logo-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--accent-color);
-            box-shadow: 0 4px 15px rgba(255, 217, 61, 0.5);
-            transition: var(--transition);
-        }
-        
-        .nav-menu { display: flex; list-style: none; }
-        
-        .nav-item { margin-left: 1rem; position: relative; } 
-        
-        .nav-link {
-            color: var(--white-color);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            background-color: var(--accent-color);
-            transform: scale(1.1) rotate(-2deg);
-            box-shadow: 0 5px 15px rgba(0, 169, 222, 0.5);
+        50% {
+            transform: translateY(-100vh) translateX(100px) scale(1.2);
         }
 
-        /* Dropdown Styles */
-        .dropdown-menu {
-            position: absolute; top: 120%; left: 0;
-            background: var(--white-color); min-width: 220px;
-            border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            list-style: none; padding: 0.8rem 0;
-            opacity: 0; visibility: hidden;
-            transform: translateY(20px) scale(0.9);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1001; border: 3px solid var(--accent-color);
+        100% {
+            transform: translateY(-200vh) translateX(-100px) scale(0.8);
         }
-        
-        /* Class to show dropdown when clicked (Desktop) */
-        .nav-item.dropdown.show-dropdown .dropdown-menu {
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        padding: 0.1rem 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+        border-bottom: 5px solid var(--accent-color);
+    }
+
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        font-family: 'Fredoka', cursive;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--white-color);
+        text-decoration: none;
+        animation: bounce 2s infinite;
+        gap: 0.2rem;
+    }
+
+    .logo-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent-color);
+        box-shadow: 0 4px 15px rgba(255, 217, 61, 0.5);
+        transition: var(--transition);
+    }
+
+    .nav-menu {
+        display: flex;
+        list-style: none;
+    }
+
+    .nav-item {
+        margin-left: 1rem;
+        position: relative;
+    }
+
+    .nav-link {
+        color: var(--white-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background-color: var(--accent-color);
+        transform: scale(1.1) rotate(-2deg);
+        box-shadow: 0 5px 15px rgba(0, 169, 222, 0.5);
+    }
+
+    /* Dropdown Styles */
+    .dropdown-menu {
+        position: absolute;
+        top: 120%;
+        left: 0;
+        background: var(--white-color);
+        min-width: 220px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        list-style: none;
+        padding: 0.8rem 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.9);
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1001;
+        border: 3px solid var(--accent-color);
+    }
+
+    /* Class to show dropdown when clicked (Desktop) */
+    .nav-item.dropdown.show-dropdown .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    /* Rotate chevron when active */
+    .nav-item.dropdown.show-dropdown .nav-link i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-link {
+        display: block;
+        padding: 0.8rem 1.5rem;
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .dropdown-link:hover {
+        background-color: var(--light-bg);
+        color: var(--accent-color);
+        padding-left: 2rem;
+    }
+
+    .dropdown-icon {
+        color: var(--secondary-color);
+        width: 20px;
+        text-align: center;
+    }
+
+    .hamburger {
+        display: none;
+        cursor: pointer;
+        color: var(--white-color);
+        font-size: 2rem;
+    }
+
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, var(--pink-color), var(--blue-color));
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--white-color);
+        padding: 120px 2rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px);
+        animation: slide 20s linear infinite;
+    }
+
+    @keyframes slide {
+        from {
+            transform: translate(0, 0);
+        }
+
+        to {
+            transform: translate(50px, 50px);
+        }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+    }
+
+    .hero h1 {
+        font-family: 'Fredoka', cursive;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+        text-shadow: 3px 3px 0 var(--primary-color);
+        animation: wiggle 2s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+
+        0%,
+        100% {
+            transform: rotate(-2deg);
+        }
+
+        50% {
+            transform: rotate(2deg);
+        }
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: linear-gradient(45deg, var(--accent-color), var(--orange-color));
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        font-family: 'Fredoka', cursive;
+        box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+        position: relative;
+        top: 0;
+    }
+
+    .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 13px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+        box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    /* Visi & Misi */
+    .visi-misi {
+        padding: 5rem 0;
+        background: var(--light-bg);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .section-title h2 {
+        font-family: 'Fredoka', cursive;
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 0 var(--accent-color);
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '✨';
+        position: absolute;
+        top: 0;
+        animation: sparkle 1.5s infinite;
+    }
+
+    @keyframes sparkle {
+
+        0%,
+        100% {
             opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
+            transform: scale(1) rotate(0deg);
         }
 
-        /* Rotate chevron when active */
-        .nav-item.dropdown.show-dropdown .nav-link i.fa-chevron-down { transform: rotate(180deg); }
-        
-        .dropdown-link {
-            display: block; padding: 0.8rem 1.5rem; color: var(--text-color);
-            text-decoration: none; font-weight: 600; font-size: 1rem;
-            transition: var(--transition); display: flex; align-items: center; gap: 0.8rem;
+        50% {
+            opacity: 0.5;
+            transform: scale(1.2) rotate(180deg);
         }
-        .dropdown-link:hover { background-color: var(--light-bg); color: var(--accent-color); padding-left: 2rem; }
-        .dropdown-icon { color: var(--secondary-color); width: 20px; text-align: center; }
+    }
 
-        .hamburger { display: none; cursor: pointer; color: var(--white-color); font-size: 2rem; }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--pink-color), var(--blue-color));
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--white-color);
-            padding: 120px 2rem 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px);
-            animation: slide 20s linear infinite;
-        }
-        
-        @keyframes slide { from { transform: translate(0, 0); } to { transform: translate(50px, 50px); } }
-        
-        .hero-content { position: relative; z-index: 1; max-width: 800px; }
-        
-        .hero h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 4rem; margin-bottom: 1.5rem; font-weight: 800;
-            text-shadow: 3px 3px 0 var(--primary-color);
-            animation: wiggle 2s ease-in-out infinite;
-        }
-        
-        @keyframes wiggle { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
-        
-        .hero p { font-size: 1.5rem; margin-bottom: 2rem; font-weight: 600; }
-        
-        .btn {
-            display: inline-block; padding: 1rem 2.5rem;
-            background: linear-gradient(45deg, var(--accent-color), var(--orange-color));
-            color: var(--text-color); text-decoration: none; border-radius: 50px;
-            font-weight: 700; font-size: 1.2rem; transition: var(--transition);
-            border: none; cursor: pointer; font-family: 'Fredoka', cursive;
-            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2); position: relative; top: 0;
-        }
-        
-        .btn:hover { transform: translateY(-5px); box-shadow: 0 13px 0 rgba(0, 0, 0, 0.2); }
-        .btn:active { transform: translateY(0); box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2); }
-        
-        /* Visi & Misi */
-        .visi-misi { padding: 5rem 0; background: var(--light-bg); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        
-        .section-title { text-align: center; margin-bottom: 3rem; position: relative; }
-        .section-title h2 {
-            font-family: 'Fredoka', cursive; font-size: 3rem;
-            color: var(--primary-color); margin-bottom: 1rem;
-            text-shadow: 2px 2px 0 var(--accent-color); display: inline-block;
-        }
-        .section-title h2::after {
-            content: '✨'; position: absolute; top: 0; animation: sparkle 1.5s infinite;
-        }
-        @keyframes sparkle { 0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); } 50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); } }
-        
-        .visi-misi-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        
-        .visi-card, .misi-card {
-            background: var(--white-color); padding: 2rem 1.5rem; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); transition: var(--transition);
-            border: 5px solid transparent; position: relative; overflow: hidden;
-        }
-        .visi-card { border-image: linear-gradient(45deg, var(--orange-color), var(--accent-color)) 1; }
-        .misi-card { border-image: linear-gradient(45deg, var(--accent-color), var(--orange-color)) 1; }
-        .visi-card:hover, .misi-card:hover { transform: translateY(-10px) rotate(1deg); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); }
-        
-        /* =========================================
+    .visi-misi-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .visi-card,
+    .misi-card {
+        background: var(--white-color);
+        padding: 2rem 1.5rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+        border: 5px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .visi-card {
+        border-image: linear-gradient(45deg, var(--orange-color), var(--accent-color)) 1;
+    }
+
+    .misi-card {
+        border-image: linear-gradient(45deg, var(--accent-color), var(--orange-color)) 1;
+    }
+
+    .visi-card:hover,
+    .misi-card:hover {
+        transform: translateY(-10px) rotate(1deg);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* =========================================
            GURU SECTION
            ========================================= */
-        .guru-section {
-            padding: 5rem 0;
-            background: #FFF9E6;
-            position: relative;
-            overflow: hidden;
-        }
-        .guru-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 5px;
-            background: repeating-linear-gradient(45deg, var(--orange-color), var(--accent-color));
-        }
+    .guru-section {
+        padding: 5rem 0;
+        background: #FFF9E6;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .guru-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2.5rem;
-        }
+    .guru-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: repeating-linear-gradient(45deg, var(--orange-color), var(--accent-color));
+    }
 
-        .guru-card {
-            background: var(--white-color);
-            border-radius: 25px;
-            padding: 0.5rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: var(--transition);
-            border-bottom: 5px solid var(--secondary-color);
-            position: relative;
-        }
+    .guru-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2.5rem;
+    }
 
-        .guru-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            border-bottom-color: var(--primary-color);
-        }
+    .guru-card {
+        background: var(--white-color);
+        border-radius: 25px;
+        padding: 0.5rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        border-bottom: 5px solid var(--secondary-color);
+        position: relative;
+    }
 
-        .guru-img-wrapper {
-            position: relative;
-            width: 170px;
-            height: 170px;
-            margin: 0 auto 0.5rem;
-        }
+    .guru-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        border-bottom-color: var(--primary-color);
+    }
 
-        .guru-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--accent-color);
-            padding: 5px;
-            background: var(--white-color);
-            transition: var(--transition);
-        }
+    .guru-img-wrapper {
+        position: relative;
+        width: 170px;
+        height: 170px;
+        margin: 0 auto 0.5rem;
+    }
 
-        .guru-card:hover .guru-img {
-            transform: rotate(-5deg) scale(1.1);
-            border-color: var(--primary-color);
-        }
+    .guru-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--accent-color);
+        padding: 5px;
+        background: var(--white-color);
+        transition: var(--transition);
+    }
 
-        .guru-name {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            color: var(--text-color);
-            margin-bottom: 0.2rem;
-        }
+    .guru-card:hover .guru-img {
+        transform: rotate(-5deg) scale(1.1);
+        border-color: var(--primary-color);
+    }
 
-        .guru-role {
-            color: var(--secondary-color);
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .guru-name {
+        font-family: 'Fredoka', cursive;
+        font-size: 1.5rem;
+        color: var(--text-color);
+        margin-bottom: 0.2rem;
+    }
 
-        /* =========================================
+    .guru-role {
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* =========================================
            MINI GRID SLIDE SHOW (AKADEMIK)
            ========================================= */
-        .fitur {
-            padding: 5rem 0;
-            background: linear-gradient(135deg, var(--purple-color), var(--blue-color));
-            position: relative;
-            overflow: hidden;
+    .fitur {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, var(--purple-color), var(--blue-color));
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fitur .section-title h2 {
+        color: var(--white-color);
+        text-shadow: 2px 2px 0 var(--primary-color);
+    }
+
+    .slider-wrapper {
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .fitur-cards {
+        display: flex;
+        overflow-x: auto;
+        gap: 2rem;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+        padding: 2rem 5px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .fitur-cards::-webkit-scrollbar {
+        display: none;
+    }
+
+    .fitur-card {
+        flex: 0 0 auto;
+        width: 290px;
+        scroll-snap-align: start;
+        background: var(--white-color);
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+        transform: rotate(-1deg);
+    }
+
+    .fitur-card:hover {
+        transform: rotate(0deg) scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .fitur-card:nth-child(even) {
+        transform: rotate(1deg);
+    }
+
+    .fitur-card:nth-child(even):hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--white-color);
+        color: var(--primary-color);
+        border: 3px solid var(--accent-color);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .slider-btn:hover {
+        background: var(--accent-color);
+        color: var(--white-color);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .prev-btn {
+        left: 0;
+    }
+
+    .next-btn {
+        right: 0;
+    }
+
+    .fitur-card-img {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .fitur-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .fitur-card:hover .fitur-card-img img {
+        transform: scale(1.1) rotate(2deg);
+    }
+
+    .fitur-card-content {
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--white-color), var(--light-bg));
+    }
+
+    .fitur-card-content h3,
+    .visi-misi-content h3 {
+        font-family: 'Fredoka', cursive;
+        color: var(--primary-color);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Gallery Filter Section */
+    .gallery-section {
+        padding: 5rem 0;
+        background: var(--light-bg);
+    }
+
+    .gallery-filters {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.8rem 1.5rem;
+        border: 3px solid var(--secondary-color);
+        background: var(--white-color);
+        color: var(--text-color);
+        border-radius: 50px;
+        font-family: 'Fredoka', cursive;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-btn:hover {
+        background: var(--secondary-color);
+        color: var(--white-color);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+    }
+
+    .filter-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--white-color);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        height: 250px;
+        transition: var(--transition);
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .gallery-item.hide {
+        display: none;
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(255, 107, 107, 0.9), transparent);
+        opacity: 0;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.5rem;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .gallery-tag {
+        background: var(--white-color);
+        color: var(--primary-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        align-self: flex-start;
+        text-transform: uppercase;
+    }
+
+    .gallery-title {
+        color: var(--white-color);
+        font-family: 'Fredoka', cursive;
+        font-size: 1.3rem;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: var(--transition);
+    }
+
+    .gallery-item:hover .gallery-title {
+        transform: translateY(0);
+    }
+
+    /* Kontak Section */
+    .kontak {
+        padding: 5rem 0;
+        background: var(--light-bg);
+    }
+
+    .kontak-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 3px solid var(--secondary-color);
+        border-radius: 15px;
+        font-family: inherit;
+        transition: var(--transition);
+        font-size: 1.1rem;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(255, 217, 61, 0.3);
+    }
+
+    .kontak-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .info-card {
+        background: var(--white-color);
+        padding: 1.5rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 5px solid var(--secondary-color);
+    }
+
+    .info-card h3 {
+        font-family: 'Fredoka', cursive;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .info-item i {
+        color: var(--accent-color);
+        margin-right: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .map-container {
+        height: 300px;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 5px solid var(--secondary-color);
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Footer */
+    .footer {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white-color);
+        padding: 3rem 0 1rem;
+        position: relative;
+    }
+
+    .footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 10px;
+        background: repeating-linear-gradient(90deg, var(--accent-color), var(--accent-color) 20px, var(--orange-color) 20px, var(--orange-color) 40px);
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-family: 'Fredoka', cursive;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        color: var(--white-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: var(--white-color);
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .footer-links a:hover {
+        color: var(--accent-color);
+        transform: translateX(5px);
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: var(--white-color);
+        color: var(--primary-color);
+        border-radius: 50%;
+        transition: var(--transition);
+        font-size: 1.5rem;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-5px) rotate(360deg);
+        background: var(--accent-color);
+        color: var(--white-color);
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 3px dashed var(--white-color);
+        font-size: 1.1rem;
+    }
+
+    .ml {
+        margin-left: 20px;
+    }
+
+    /* Toast Notification */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--accent-color), var(--orange-color));
+        color: var(--text-color);
+        padding: 1rem 1.5rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        font-family: 'Fredoka', cursive;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .toast.show {
+        transform: translateX(0);
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0) rotate(0deg);
         }
 
-        .fitur .section-title h2 {
-            color: var(--white-color);
-            text-shadow: 2px 2px 0 var(--primary-color);
+        25% {
+            transform: translateX(-10px) rotate(-2deg);
+        }
+
+        75% {
+            transform: translateX(10px) rotate(2deg);
+        }
+    }
+
+    /* Confetti Animation */
+    .confetti {
+        position: fixed;
+        top: -10px;
+        z-index: 9999;
+        border-radius: 50%;
+        animation: fall 3s linear forwards;
+        pointer-events: none;
+    }
+
+    @keyframes fall {
+        to {
+            transform: translateY(110vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .hero h1 {
+            font-size: 3rem;
+        }
+
+        .kontak-container {
+            grid-template-columns: 1fr;
+        }
+
+        .fitur-card {
+            width: 100%;
+        }
+
+        .slider-btn {
+            display: flex;
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .slider-wrapper {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 0.1rem;
         }
 
         .fitur-cards {
-            display: flex;
-            overflow-x: auto;
-            gap: 2rem;
-            scroll-behavior: smooth;
-            scroll-snap-type: x mandatory;
-            padding: 2rem 5px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
-        .fitur-cards::-webkit-scrollbar { display: none; }
 
+        .hamburger {
+            display: block;
+        }
+
+        .nav-menu {
+            position: fixed;
+            left: -100%;
+            top: 100px;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .nav-item {
+            margin: 1rem 0;
+        }
+
+        /* Mobile Dropdown Styling */
+        .dropdown-menu {
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            display: none;
+            /* Hidden by default on mobile */
+            text-align: left;
+            padding-left: 2rem;
+        }
+
+        /* Show mobile dropdown when active class is added */
+        .nav-item.dropdown.show-dropdown .dropdown-menu {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .dropdown-link {
+            color: var(--white-color);
+            padding: 0.5rem 0;
+            background: transparent !important;
+        }
+
+        .dropdown-link:hover {
+            padding-left: 2rem;
+            background: transparent !important;
+            color: var(--accent-color);
+        }
+
+        /* Fix active link style on mobile */
+        .nav-link.active,
+        .nav-link:hover {
+            transform: none !important;
+            box-shadow: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid var(--white-color);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
         .fitur-card {
-            flex: 0 0 auto;
-            width: 290px;
-            scroll-snap-align: start;
-            background: var(--white-color);
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            transform: rotate(-1deg);
+            width: 100%;
         }
-
-        .fitur-card:hover {
-            transform: rotate(0deg) scale(1.05);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .fitur-card:nth-child(even) { transform: rotate(1deg); }
-        .fitur-card:nth-child(even):hover { transform: rotate(0deg) scale(1.05); }
 
         .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--white-color);
-            color: var(--primary-color);
-            border: 3px solid var(--accent-color);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: var(--transition);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
         }
 
-        .slider-btn:hover {
-            background: var(--accent-color);
+        .slider-wrapper {
+            padding: 0 0.1rem;
+        }
+
+        .fitur-cards {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .hamburger {
+            display: block;
+        }
+
+        .nav-menu {
+            position: fixed;
+            left: -100%;
+            top: 100px;
+            flex-direction: column;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .nav-item {
+            margin: 1rem 0;
+        }
+
+        /* Mobile Dropdown Styling */
+        .dropdown-menu {
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            display: none;
+            text-align: left;
+            padding-left: 2rem;
+        }
+
+        .nav-item.dropdown.show-dropdown .dropdown-menu {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .dropdown-link {
             color: var(--white-color);
-            transform: translateY(-50%) scale(1.1);
+            padding: 0.5rem 0;
+            background: transparent !important;
         }
-        .prev-btn { left: 0; }
-        .next-btn { right: 0; }
 
-        .fitur-card-img { height: 200px; overflow: hidden; position: relative; }
-        .fitur-card-img img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
-        .fitur-card:hover .fitur-card-img img { transform: scale(1.1) rotate(2deg); }
-        .fitur-card-content { padding: 1rem; background: linear-gradient(135deg, var(--white-color), var(--light-bg)); }
-        .fitur-card-content h3,.visi-misi-content h3 { font-family: 'Fredoka', cursive; color: var(--primary-color); font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-        
-        /* Gallery Filter Section */
-        .gallery-section { padding: 5rem 0; background: var(--light-bg); }
-        .gallery-filters { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
-        .filter-btn {
-            padding: 0.8rem 1.5rem; border: 3px solid var(--secondary-color);
-            background: var(--white-color); color: var(--text-color); border-radius: 50px;
-            font-family: 'Fredoka', cursive; font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 0.5rem;
+        .dropdown-link:hover {
+            padding-left: 2rem;
+            background: transparent !important;
+            color: var(--accent-color);
         }
-        .filter-btn:hover { background: var(--secondary-color); color: var(--white-color); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4); }
-        .filter-btn.active { background: var(--primary-color); border-color: var(--primary-color); color: var(--white-color); transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        .gallery-item {
-            position: relative; border-radius: 20px; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); cursor: pointer;
-            height: 250px; transition: var(--transition); opacity: 1; transform: scale(1);
-        }
-        .gallery-item.hide { display: none; }
-        .gallery-item:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); z-index: 2; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .gallery-item:hover img { transform: scale(1.1); }
-        .gallery-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(255, 107, 107, 0.9), transparent);
-            opacity: 0; transition: var(--transition); display: flex;
-            flex-direction: column; justify-content: flex-end; padding: 1.5rem;
-        }
-        .gallery-item:hover .gallery-overlay { opacity: 1; }
-        .gallery-tag {
-            background: var(--white-color); color: var(--primary-color);
-            padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;
-            font-weight: 700; display: inline-block; margin-bottom: 0.5rem; align-self: flex-start; text-transform: uppercase;
-        }
-        .gallery-title {
-            color: var(--white-color); font-family: 'Fredoka', cursive;
-            font-size: 1.3rem; text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
-            transform: translateY(20px); transition: var(--transition);
-        }
-        .gallery-item:hover .gallery-title { transform: translateY(0); }
-        
-        /* Kontak Section */
-        .kontak { padding: 5rem 0; background: var(--light-bg); }
-        .kontak-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--primary-color); font-size: 1.1rem; }
-        .form-group input, .form-group textarea {
-            width: 100%; padding: 1rem; border: 3px solid var(--secondary-color);
-            border-radius: 15px; font-family: inherit; transition: var(--transition); font-size: 1.1rem;
-        }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-color); transform: scale(1.02); box-shadow: 0 5px 15px rgba(255, 217, 61, 0.3); }
-        .kontak-info { display: flex; flex-direction: column; gap: 2rem; }
-        .info-card { background: var(--white-color); padding: 1.5rem; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border: 5px solid var(--secondary-color); }
-        .info-card h3 { font-family: 'Fredoka', cursive; color: var(--primary-color); margin-bottom: 1rem; font-size: 1.8rem; display: flex; align-items: center; gap: 0.5rem; }
-        .info-item { display: flex; align-items: center; margin-bottom: 1rem; font-size: 1.1rem; }
-        .info-item i { color: var(--accent-color); margin-right: 1rem; font-size: 1.5rem; }
-        .map-container { height: 300px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border: 5px solid var(--secondary-color); }
-        .map-container iframe { width: 100%; height: 100%; border: none; }
-        
-        /* Footer */
-        .footer { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white-color); padding: 3rem 0 1rem; position: relative; }
-        .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 10px; background: repeating-linear-gradient(90deg, var(--accent-color), var(--accent-color) 20px, var(--orange-color) 20px, var(--orange-color) 40px); }
-        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
-        .footer-section h3 { font-family: 'Fredoka', cursive; margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--white-color); display: flex; align-items: center; gap: 0.5rem; }
-        .footer-links { list-style: none; }
-        .footer-links li { margin-bottom: 0.8rem; }
-        .footer-links a { color: var(--white-color); text-decoration: none; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; }
-        .footer-links a:hover { color: var(--accent-color); transform: translateX(5px); }
-        .social-links { display: flex; gap: 1rem; margin-top: 1rem; }
-        .social-links a { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: var(--white-color); color: var(--primary-color); border-radius: 50%; transition: var(--transition); font-size: 1.5rem; }
-        .social-links a:hover { transform: translateY(-5px) rotate(360deg); background: var(--accent-color); color: var(--white-color); }
-        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 3px dashed var(--white-color); font-size: 1.1rem; }
-        .ml { margin-left:20px; }
-        /* Toast Notification */
-        .toast {
-            position: fixed; bottom: 20px; right: 20px;
-            background: linear-gradient(135deg, var(--accent-color), var(--orange-color));
-            color: var(--text-color); padding: 1rem 1.5rem; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transform: translateX(400px); transition: transform 0.3s ease;
-            z-index: 1000; font-family: 'Fredoka', cursive; font-size: 1.1rem; font-weight: 600;
-        }
-        .toast.show { transform: translateX(0); animation: shake 0.5s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0) rotate(0deg); } 25% { transform: translateX(-10px) rotate(-2deg); } 75% { transform: translateX(10px) rotate(2deg); } }
-        
-        /* Confetti Animation */
-        .confetti {
-            position: fixed; width: 10px; height: 10px; background: var(--accent-color);
-            position: absolute; animation: confetti-fall 3s linear;
-        }
-        @keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-        
-        /* Responsive Styles */
-        @media (max-width: 992px) { .hero h1 { font-size: 3rem; } .kontak-container { grid-template-columns: 1fr; }
-            .fitur-card { width: 100%; }
-            .slider-btn { display: flex; width: 40px; height: 40px; font-size: 1rem; background: rgba(255, 255, 255, 0.9); }
-            .slider-wrapper { padding: 0 0.1rem; }
-            .fitur-cards { padding-left: 1rem; padding-right: 1rem; }
-            .hamburger { display: block; }
-            .nav-menu {
-                position: fixed; left: -100%; top: 100px; flex-direction: column;
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-                width: 100%; text-align: center; transition: 0.3s; padding: 2rem 0;
-                border-bottom: 5px solid var(--accent-color);
-            }
-            .nav-menu.active { left: 0; }
-            .nav-item { margin: 1rem 0; }
-            
-            /* Mobile Dropdown Styling */
-            .dropdown-menu {
-                position: static; opacity: 1; visibility: visible; transform: none;
-                box-shadow: none; border: none; background: transparent;
-                padding: 0.5rem 0; display: none; /* Hidden by default on mobile */
-                text-align: left; padding-left: 2rem;
-            }
-            
-            /* Show mobile dropdown when active class is added */
-            .nav-item.dropdown.show-dropdown .dropdown-menu {
-                display: block; animation: fadeIn 0.3s ease;
-            }
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            
-            .dropdown-link { color: var(--white-color); padding: 0.5rem 0; background: transparent !important; }
-            .dropdown-link:hover { padding-left: 2rem; background: transparent !important; color: var(--accent-color); }
 
-            /* Fix active link style on mobile */
-            .nav-link.active, .nav-link:hover {
-                transform: none !important;
-                box-shadow: none;
-                background-color: rgba(255, 255, 255, 0.3);
-                border: 2px solid var(--white-color);
-            }
-
-            .hero h1 { font-size: 2.5rem; }
-            .section-title h2 { font-size: 2.5rem; }
-            .logo-img { width: 45px; height: 45px; }
-            .logo-text { font-size: 1.5rem; }
+        .nav-link.active,
+        .nav-link:hover {
+            transform: none !important;
+            box-shadow: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid var(--white-color);
         }
-        @media (max-width: 768px) {
-            .fitur-card { width: 100%; }
-            .slider-btn { display: flex; width: 40px; height: 40px; font-size: 1rem; background: rgba(255, 255, 255, 0.9); }
-            .slider-wrapper { padding: 0 0.1rem; }
-            .fitur-cards { padding-left: 1rem; padding-right: 1rem; }
-            .hamburger { display: block; }
-            .nav-menu {
-                position: fixed; left: -100%; top: 100px; flex-direction: column;
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-                width: 100%; text-align: center; transition: 0.3s; padding: 2rem 0;
-                border-bottom: 5px solid var(--accent-color);
-            }
-            .nav-menu.active { left: 0; }
-            .nav-item { margin: 1rem 0; }
-            
-            /* Mobile Dropdown Styling */
-            .dropdown-menu {
-                position: static; opacity: 1; visibility: visible; transform: none;
-                box-shadow: none; border: none; background: transparent;
-                padding: 0.5rem 0; display: none;
-                text-align: left; padding-left: 2rem;
-            }
-            .nav-item.dropdown.show-dropdown .dropdown-menu {
-                display: block; animation: fadeIn 0.3s ease;
-            }
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            .dropdown-link { color: var(--white-color); padding: 0.5rem 0; background: transparent !important; }
-            .dropdown-link:hover { padding-left: 2rem; background: transparent !important; color: var(--accent-color); }
 
-            .nav-link.active, .nav-link:hover {
-                transform: none !important;
-                box-shadow: none;
-                background-color: rgba(255, 255, 255, 0.3);
-                border: 2px solid var(--white-color);
-            }
+        .hero h1 {
+            font-size: 2.5rem;
+        }
 
-            .hero h1 { font-size: 2.5rem; }
-            .section-title h2 { font-size: 2.5rem; }
-            .logo-img { width: 45px; height: 45px; }
-            .logo-text { font-size: 1.5rem; }
+        .section-title h2 {
+            font-size: 2.5rem;
         }
-        @media (max-width: 576px) {
-            .fitur-card { width: 100%; }
-            .hero h1 { font-size: 2rem; }
-            .section-title h2 { font-size: 2rem; }
-            .footer-content { grid-template-columns: 1fr; }
-            .logo-img { width: 40px; height: 40px; }
-            .logo-text { font-size: 1.3rem; }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
         }
+
+        .logo-text {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .fitur-card {
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+        }
+
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+        }
+    }
     </style>
 </head>
+
 <body>
     <!-- Floating Bubbles Background -->
     <div class="bubbles" id="bubbles"></div>
-
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-container">
@@ -633,7 +1277,6 @@
             </a>
             <ul class="nav-menu">
                 <li class="nav-item"><a href="#beranda" class="nav-link active"><i class="fas fa-home"></i> Beranda</a></li>
-                
                 <!-- DROPDOWN MENU (Click Only) -->
                 <li class="nav-item dropdown">
                     <a href="#profil" class="nav-link" id="dropdownToggle">
@@ -646,7 +1289,6 @@
                         <li><a href="#" class="dropdown-link"><i class="fas fa-book-reader dropdown-icon"></i> Sejarah Kita</a></li>
                     </ul>
                 </li>
-                
                 <li class="nav-item"><a href="#akademik" class="nav-link"><i class="fas fa-book"></i> Akademik</a></li>
                 <li class="nav-item"><a href="#galeri" class="nav-link"><i class="fas fa-images"></i> Galeri</a></li>
                 <li class="nav-item"><a href="#kontak" class="nav-link"><i class="fas fa-envelope"></i> Kontak</a></li>
@@ -656,7 +1298,6 @@
             </div>
         </div>
     </nav>
-
     <!-- Hero Section -->
     <section id="beranda" class="hero">
         <div class="hero-content">
@@ -664,7 +1305,6 @@
             <p>Sekolah Paling Seru dan Menyenangkan di Dunia!</p>
         </div>
     </section>
-
     <!-- Visi & Misi Section -->
     <section id="profil" class="visi-misi">
         <div class="container">
@@ -679,15 +1319,14 @@
                 <div class="misi-card">
                     <h3><i class="fas fa-bullseye"></i> Misi Kami</h3>
                     <ol class="ml">
-                      <li>Beriman dan bertakwa modal dasar fondamen sebagai peserta didik.</li>
-                      <li>Cerdas dan terampil adalah bakal peserta didik dalam hidup berbangsa bernegara bermasyarakat dan berguna.</li>
-                      <li>Kesiapsiagaan dan kedisiplinan dalam menghadapi perkembangan zaman.</li>
+                        <li>Beriman dan bertakwa modal dasar fondamen sebagai peserta didik.</li>
+                        <li>Cerdas dan terampil adalah bakal peserta didik dalam hidup berbangsa bernegara bermasyarakat dan berguna.</li>
+                        <li>Kesiapsiagaan dan kedisiplinan dalam menghadapi perkembangan zaman.</li>
                     </ol>
                 </div>
             </div>
         </div>
     </section>
-
     <!-- =========================================
          GURU SECTION
          ========================================= -->
@@ -697,7 +1336,6 @@
                 <h2>Guru-Guru Hebat</h2>
                 <p>Mereka yang membuat belajar jadi petualangan yang tak terlupakan!</p>
             </div>
-
             <div class="guru-grid">
                 <div class="guru-card">
                     <div class="guru-img-wrapper">
@@ -727,7 +1365,7 @@
                     <h3 class="guru-name">Pak Agung</h3>
                     <p class="guru-role">Operator</p>
                 </div>
-                 <div class="guru-card">
+                <div class="guru-card">
                     <div class="guru-img-wrapper">
                         <img src="images/teti.jpg" alt="Bu Teti" class="guru-img" loading="lazy">
                     </div>
@@ -789,18 +1427,15 @@
     <!-- =========================================
          END GURU SECTION
          ========================================= -->
-
     <!-- Mini Grid Slide Show Section (Akademik) -->
     <section id="akademik" class="fitur">
         <div class="container">
             <div class="section-title">
                 <h2>Kegiatan Seru Kita!</h2>
             </div>
-
             <!-- Slider Wrapper & Buttons -->
             <div class="slider-wrapper" id="sliderWrapper">
                 <button class="slider-btn prev-btn" id="slideLeft"><i class="fas fa-chevron-left"></i></button>
-                
                 <div class="fitur-cards" id="fiturSlider">
                     <div class="fitur-card">
                         <div class="fitur-card-img">
@@ -836,12 +1471,10 @@
                         </div>
                     </div>
                 </div>
-
                 <button class="slider-btn next-btn" id="slideRight"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </section>
-
     <!-- Gallery Filter Section -->
     <section id="galeri" class="gallery-section">
         <div class="container">
@@ -849,7 +1482,6 @@
                 <h2>Galeri Ceria</h2>
                 <p>Pilih kategori untuk melihat keseruan kita!</p>
             </div>
-            
             <!-- Filter Buttons -->
             <div class="gallery-filters">
                 <button class="filter-btn active" data-filter="all"><i class="fas fa-th-large"></i> Semua</button>
@@ -858,7 +1490,6 @@
                 <button class="filter-btn" data-filter="seni"><i class="fas fa-paint-brush"></i> Seni</button>
                 <button class="filter-btn" data-filter="main"><i class="fas fa-gamepad"></i> Main</button>
             </div>
-
             <!-- Gallery Grid -->
             <div class="gallery-grid">
                 <!-- Belajar Items -->
@@ -883,7 +1514,6 @@
                         <h3 class="gallery-title">Jam Lab Komputer</h3>
                     </div>
                 </div>
-
                 <!-- Olahraga Items -->
                 <div class="gallery-item olahraga">
                     <img src="https://picsum.photos/seed/soccer/400/300.jpg" alt="Sepak Bola" loading="lazy">
@@ -906,7 +1536,6 @@
                         <h3 class="gallery-title">Slam Dunk Kecil</h3>
                     </div>
                 </div>
-
                 <!-- Seni Items -->
                 <div class="gallery-item seni">
                     <img src="https://picsum.photos/seed/painting/400/300.jpg" alt="Melukis" loading="lazy">
@@ -922,7 +1551,6 @@
                         <h3 class="gallery-title">Nada Indah</h3>
                     </div>
                 </div>
-
                 <!-- Main Items -->
                 <div class="gallery-item main">
                     <img src="https://picsum.photos/seed/toys/400/300.jpg" alt="Mainan" loading="lazy">
@@ -948,7 +1576,6 @@
             </div>
         </div>
     </section>
-
     <!-- Kontak Section -->
     <section id="kontak" class="kontak">
         <div class="container">
@@ -985,7 +1612,6 @@
             </div>
         </div>
     </section>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -1035,266 +1661,272 @@
             </div>
         </div>
     </footer>
-
     <!-- Toast Notification -->
     <div id="toast" class="toast">Pesanmu terkirim dengan bahagia! 🎉</div>
-
     <script>
-        document.getElementById("year").textContent = new Date().getFullYear();
-        const images = document.querySelectorAll(".guru-img");
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const images = document.querySelectorAll(".guru-img");
+    images.forEach(img => {
+        img.onerror = () => {
+            img.src = "images/default.jpg";
+        };
+    });
 
-images.forEach(img => {
-  img.onerror = () => {
-    img.src = "images/default.jpg";
-  };
-});
+    // Create floating bubbles
+    function createBubbles() {
+        const bubblesContainer = document.getElementById('bubbles');
+        const bubbleCount = 15;
 
-        // Create floating bubbles
-        function createBubbles() {
-            const bubblesContainer = document.getElementById('bubbles');
-            const bubbleCount = 15;
-            
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                const size = Math.random() * 60 + 20;
-                bubble.style.width = size + 'px';
-                bubble.style.height = size + 'px';
-                bubble.style.left = Math.random() * 100 + '%';
-                bubble.style.animationDelay = Math.random() * 5 + 's';
-                bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                bubblesContainer.appendChild(bubble);
+        for (let i = 0; i < bubbleCount; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = Math.random() * 60 + 20;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * 100 + '%';
+            bubble.style.animationDelay = Math.random() * 5 + 's';
+            bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            bubblesContainer.appendChild(bubble);
+        }
+    }
+
+    createBubbles();
+
+    // Forms Handling
+    const toast = document.getElementById('toast');
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        createConfetti();
+        setTimeout(() => toast.classList.remove('show'), 5000);
+    }
+
+    // document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+    //     e.preventDefault();
+    //     showToast('Terima kasih! Kamu dapat hadiah! 🎁');
+    //     e.target.reset();
+    // });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navbar Active State
+        const activeLink = document.querySelector('.nav-link[href="#beranda"]');
+        if (activeLink) activeLink.classList.add('active');
+        if (activeLink) { showToast('Hallo Sahabat Ceria! 🎉'); }
+
+        // Dynamic Hero Padding
+        function adjustHeroPadding() {
+            const navbar = document.querySelector('.navbar');
+            const hero = document.querySelector('.hero');
+            if (navbar && hero) {
+                const navbarHeight = navbar.offsetHeight;
+                hero.style.paddingTop = (navbarHeight + 20) + 'px';
             }
         }
-        
-        createBubbles();
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // Navbar Active State
-            const activeLink = document.querySelector('.nav-link[href="#beranda"]');
-            if (activeLink) activeLink.classList.add('active');
+        adjustHeroPadding();
+        window.addEventListener('resize', adjustHeroPadding);
 
-            // Dynamic Hero Padding
-            function adjustHeroPadding() {
-                const navbar = document.querySelector('.navbar');
-                const hero = document.querySelector('.hero');
-                if (navbar && hero) {
-                    const navbarHeight = navbar.offsetHeight;
-                    hero.style.paddingTop = (navbarHeight + 20) + 'px';
-                }
-            }
-            adjustHeroPadding();
-            window.addEventListener('resize', adjustHeroPadding);
-            
-            // Mobile Menu Logic
-            const hamburger = document.querySelector('.hamburger');
-            const navMenu = document.querySelector('.nav-menu');
-            
-            hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+        // Mobile Menu Logic
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
 
-            // =========================================
-            // UPDATED: Handle Clicks on Nav Links (Dropdown Fix)
-            // =========================================
-            document.querySelectorAll('.nav-link, .dropdown-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    // Check if the clicked link is inside a dropdown parent
-                    // OR if it is the dropdown toggle button itself
-                    const isDropdownToggle = link.closest('.dropdown');
-                    const hasDropdownSibling = link.nextElementSibling && link.nextElementSibling.classList.contains('dropdown-menu');
+        hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
 
-                    if (isDropdownToggle && hasDropdownSibling) {
-                        // This is the "Profil" button.
-                        // Do NOT close the main mobile menu. Let the dropdown open.
-                        e.preventDefault(); 
-                        // Note: We do NOT call navMenu.classList.remove('active') here
-                    } else {
-                        // This is a regular link (Beranda, Galeri) OR a link inside the dropdown (Guru-guru).
-                        // Close the mobile menu for better UX.
-                        navMenu.classList.remove('active');
-                    }
-                });
-            });
+        // =========================================
+        // UPDATED: Handle Clicks on Nav Links (Dropdown Fix)
+        // =========================================
+        document.querySelectorAll('.nav-link, .dropdown-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Check if the clicked link is inside a dropdown parent
+                // OR if it is the dropdown toggle button itself
+                const isDropdownToggle = link.closest('.dropdown');
+                const hasDropdownSibling = link.nextElementSibling && link.nextElementSibling.classList.contains('dropdown-menu');
 
-            // =========================================
-            // DROPDOWN TOGGLE LOGIC (Desktop & Mobile)
-            // =========================================
-            const dropdownToggle = document.getElementById('dropdownToggle');
-            const dropdownItem = document.querySelector('.dropdown');
-            
-            if (dropdownToggle && dropdownItem) {
-                dropdownToggle.addEventListener('click', function(e) {
+                if (isDropdownToggle && hasDropdownSibling) {
+                    // This is the "Profil" button.
+                    // Do NOT close the main mobile menu. Let the dropdown open.
                     e.preventDefault();
-                    e.stopPropagation();
-                    dropdownItem.classList.toggle('show-dropdown');
-                });
-            }
-
-            // Close dropdown when clicking outside (Desktop mainly)
-            document.addEventListener('click', function(e) {
-                if (dropdownItem && !dropdownItem.contains(e.target)) {
-                    dropdownItem.classList.remove('show-dropdown');
-                }
-            });
-
-            // Forms Handling
-            const toast = document.getElementById('toast');
-            
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                createConfetti();
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }
-            
-            // document.getElementById('newsletterForm').addEventListener('submit', (e) => {
-            //     e.preventDefault();
-            //     showToast('Terima kasih! Kamu dapat hadiah! 🎁');
-            //     e.target.reset();
-            // });
-            
-                        // =========================================
-            // CLEAN SCROLL SPY (Refactor with IntersectionObserver)
-            // =========================================
-            
-            const sections = document.querySelectorAll('section');
-            
-            // Konfigurasi Observer:
-            // rootMargin: "-100px 0px -50% 0px" -> Bagian section harus masuk 100px dari atas layar.
-            // -50% bagian bawah memastikan hanya 1 section yang aktif di satu waktu.
-            const observerOptions = {
-                root: null,
-                rootMargin: "-100px 0px -50% 0px", 
-                threshold: 0
-            };
-
-            const observerCallback = (entries) => {
-                entries.forEach(entry => {
-                    // Hanya proses jika section masuk ke viewport
-                    if (entry.isIntersecting) {
-                        highlightLink(entry.target.id);
-                    }
-                });
-            };
-
-            // Fungsi utama untuk menandai link yang aktif
-            const highlightLink = (id) => {
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    const linkId = link.getAttribute('href').slice(1); // Ambil ID dari href (contoh: #guru -> guru)
-                    
-                    // 1. Hapus semua class active dulu (agar bersih)
-                    link.classList.remove('active');
-
-                    // 2. Tambahkan class active jika ID cocok
-                    if (linkId === id) {
-                        link.classList.add('active');
-                    }
-
-                    // 3. LOGIC KHUSUS: Jika sedang melihat anak (Guru/Fasilitas/Sejarah),
-                    // maka parent (Profil) juga harus aktif.
-                    if (linkId === 'profil' && ['guru', 'fasilitas', 'sejarah'].includes(id)) {
-                        link.classList.add('active');
-                    }
-                });
-            };
-
-            // Mulai mengamati setiap section
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
-            sections.forEach(section => observer.observe(section));
-
-            /* =========================================
-               GALLERY FILTER LOGIC
-               ========================================= */
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const galleryItems = document.querySelectorAll('.gallery-item');
-
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const filterValue = btn.getAttribute('data-filter');
-                    galleryItems.forEach(item => {
-                        if (filterValue === 'all' || item.classList.contains(filterValue)) {
-                            item.classList.remove('hide');
-                            item.style.opacity = '0';
-                            item.style.transform = 'scale(0.8)';
-                            setTimeout(() => {
-                                item.style.opacity = '1';
-                                item.style.transform = 'scale(1)';
-                            }, 50);
-                        } else {
-                            item.classList.add('hide');
-                        }
-                    });
-                });
-            });
-
-            /* =========================================
-               AUTO SLIDE LOGIC (AKADEMIK SECTION)
-               ========================================= */
-            const sliderContainer = document.getElementById('fiturSlider');
-            const sliderWrapper = document.getElementById('sliderWrapper');
-            const slideLeftBtn = document.getElementById('slideLeft');
-            const slideRightBtn = document.getElementById('slideRight');
-            
-            const scrollAmount = 320;
-            const autoSlideIntervalTime = 3500;
-            let autoSlideInterval;
-
-            function nextSlide() {
-                const maxScrollLeft = sliderContainer.scrollWidth - sliderContainer.clientWidth;
-                if (sliderContainer.scrollLeft >= maxScrollLeft - 5) {
-                    sliderContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                    // Note: We do NOT call navMenu.classList.remove('active') here
                 } else {
-                    sliderContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    // This is a regular link (Beranda, Galeri) OR a link inside the dropdown (Guru-guru).
+                    // Close the mobile menu for better UX.
+                    navMenu.classList.remove('active');
                 }
-            }
-
-            function startAutoSlide() {
-                stopAutoSlide();
-                autoSlideInterval = setInterval(nextSlide, autoSlideIntervalTime);
-            }
-
-            function stopAutoSlide() {
-                clearInterval(autoSlideInterval);
-            }
-
-            sliderWrapper.addEventListener('mouseenter', stopAutoSlide);
-            sliderWrapper.addEventListener('mouseleave', startAutoSlide);
-
-            slideRightBtn.addEventListener('click', () => {
-                stopAutoSlide();
-                nextSlide();
-                startAutoSlide();
             });
+        });
 
-            slideLeftBtn.addEventListener('click', () => {
-                stopAutoSlide();
-                sliderContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                startAutoSlide();
+        // =========================================
+        // DROPDOWN TOGGLE LOGIC (Desktop & Mobile)
+        // =========================================
+        const dropdownToggle = document.getElementById('dropdownToggle');
+        const dropdownItem = document.querySelector('.dropdown');
+
+        if (dropdownToggle && dropdownItem) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownItem.classList.toggle('show-dropdown');
             });
+        }
 
+        // Close dropdown when clicking outside (Desktop mainly)
+        document.addEventListener('click', function(e) {
+            if (dropdownItem && !dropdownItem.contains(e.target)) {
+                dropdownItem.classList.remove('show-dropdown');
+            }
+        });
+
+        // =========================================
+        // CLEAN SCROLL SPY (Refactor with IntersectionObserver)
+        // =========================================
+
+        const sections = document.querySelectorAll('section');
+
+        // Konfigurasi Observer:
+        // rootMargin: "-100px 0px -50% 0px" -> Bagian section harus masuk 100px dari atas layar.
+        // -50% bagian bawah memastikan hanya 1 section yang aktif di satu waktu.
+        const observerOptions = {
+            root: null,
+            rootMargin: "-100px 0px -50% 0px",
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                // Hanya proses jika section masuk ke viewport
+                if (entry.isIntersecting) {
+                    highlightLink(entry.target.id);
+                }
+            });
+        };
+
+        // Fungsi utama untuk menandai link yang aktif
+        const highlightLink = (id) => {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const linkId = link.getAttribute('href').slice(1); // Ambil ID dari href (contoh: #guru -> guru)
+
+                // 1. Hapus semua class active dulu (agar bersih)
+                link.classList.remove('active');
+
+                // 2. Tambahkan class active jika ID cocok
+                if (linkId === id) {
+                    link.classList.add('active');
+                }
+
+                // 3. LOGIC KHUSUS: Jika sedang melihat anak (Guru/Fasilitas/Sejarah),
+                // maka parent (Profil) juga harus aktif.
+                if (linkId === 'profil' && ['guru', 'fasilitas', 'sejarah'].includes(id)) {
+                    link.classList.add('active');
+                }
+            });
+        };
+
+        // Mulai mengamati setiap section
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        sections.forEach(section => observer.observe(section));
+
+        /* =========================================
+           GALLERY FILTER LOGIC
+           ========================================= */
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filterValue = btn.getAttribute('data-filter');
+                galleryItems.forEach(item => {
+                    if (filterValue === 'all' || item.classList.contains(filterValue)) {
+                        item.classList.remove('hide');
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        }, 50);
+                    } else {
+                        item.classList.add('hide');
+                    }
+                });
+            });
+        });
+
+        /* =========================================
+           AUTO SLIDE LOGIC (AKADEMIK SECTION)
+           ========================================= */
+        const sliderContainer = document.getElementById('fiturSlider');
+        const sliderWrapper = document.getElementById('sliderWrapper');
+        const slideLeftBtn = document.getElementById('slideLeft');
+        const slideRightBtn = document.getElementById('slideRight');
+
+        const scrollAmount = 320;
+        const autoSlideIntervalTime = 3500;
+        let autoSlideInterval;
+
+        function nextSlide() {
+            const maxScrollLeft = sliderContainer.scrollWidth - sliderContainer.clientWidth;
+            if (sliderContainer.scrollLeft >= maxScrollLeft - 5) {
+                sliderContainer.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                sliderContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            autoSlideInterval = setInterval(nextSlide, autoSlideIntervalTime);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        sliderWrapper.addEventListener('mouseenter', stopAutoSlide);
+        sliderWrapper.addEventListener('mouseleave', startAutoSlide);
+
+        slideRightBtn.addEventListener('click', () => {
+            stopAutoSlide();
+            nextSlide();
             startAutoSlide();
         });
-        
-        // Confetti Effect
-        function createConfetti() {
-            const colors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#A8E6CF', '#FFB6C1', '#FFA07A'];
-            const confettiCount = 50;
-            
-            for (let i = 0; i < confettiCount; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.width = Math.random() * 10 + 5 + 'px';
-                    confetti.style.height = confetti.style.width;
-                    document.body.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), 3000);
-                }, i * 30);
-            }
+
+        slideLeftBtn.addEventListener('click', () => {
+            stopAutoSlide();
+            sliderContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            startAutoSlide();
+        });
+
+        startAutoSlide();
+    });
+
+    // Confetti Effect
+    function createConfetti() {
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#A8E6CF', '#FFB6C1', '#FFA07A'];
+        const confettiCount = 80;
+
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor =
+                    colors[Math.floor(Math.random() * colors.length)];
+
+                const size = Math.random() * 10 + 6;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000);
+            }, i * 30);
         }
+    }
     </script>
 </body>
+
 </html>
