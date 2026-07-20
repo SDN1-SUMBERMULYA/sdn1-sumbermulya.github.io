@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan Absensi QR Siswa</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    margin: 0;
+    background: #f2f4f7;
+    color: #202124;
+  }
+  .hidden { display: none !important; }
+  .center-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4285F4, #34A853);
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin: 16px;
+  }
+  .login-card { width: 320px; text-align: center; }
+  .login-card h2 { margin-bottom: 4px; }
+  .subtitle { color: #5f6368; font-size: 13px; margin-bottom: 16px; }
+  input {
+    width: 100%; padding: 10px; margin: 6px 0;
+    border: 1px solid #dadce0; border-radius: 8px; font-size: 14px;
+  }
+  button {
+    width: 100%; padding: 10px; margin-top: 8px;
+    background: #4285F4; color: white; border: none;
+    border-radius: 8px; font-size: 14px; cursor: pointer;
+  }
+  button:hover { background: #3367d6; }
+  .error-msg { color: #d93025; font-size: 13px; margin-top: 8px; min-height: 16px; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; padding: 12px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .topbar-title { font-weight: bold; font-size: 16px; }
+  .btn-small { width: auto; padding: 6px 12px; font-size: 12px; background: #ea4335; }
+  #qr-reader { width: 100%; max-width: 400px; margin: 12px auto; }
+  .scan-result {
+    text-align: center; padding: 16px; margin-top: 10px;
+    border-radius: 8px; font-size: 15px; min-height: 20px;
+  }
+  .scan-result.success { background: #e6f4ea; color: #137333; }
+  .scan-result.error { background: #fce8e6; color: #c5221f; }
+  .scan-result.warning { background: #fef7e0; color: #b06000; }
+</style>
+</head>
+<body>
+
+  <!-- KONFIGURASI: ganti URL ini dengan Web App URL Apps Script Anda -->
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec';
+    const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec'; // biasanya sama dengan API_URL
+  </script>
+
+  <div id="page-noauth" class="page center-page hidden">
+    <div class="card login-card">
+      <h2>🔒 Belum Login</h2>
+      <p class="subtitle">Halaman ini hanya bisa diakses lewat Dashboard. Silakan login dulu di sana, lalu klik "Buka Halaman Scan Absensi".</p>
+      <button onclick="window.location.href=DASHBOARD_URL">Buka Dashboard</button>
+    </div>
+  </div>
+
+  <div id="page-ready" class="page center-page hidden">
+    <div class="card login-card">
+      <h2>📷 Scan Absensi</h2>
+      <p class="subtitle">Login sebagai <b id="ready-user-name"></b></p>
+      <button onclick="startScanning()">Mulai Scan</button>
+      <button style="background:#ea4335; margin-top:6px;" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div id="page-app" class="page hidden">
+    <div class="topbar">
+      <div class="topbar-title">📷 Scan Absensi</div>
+      <div>
+        <span id="user-name"></span>
+        <button class="btn-small" style="background:#4285F4;" onclick="window.location.href=DASHBOARD_URL">Dashboard</button>
+        <button class="btn-small" onclick="doLogout()">Keluar</button>
+      </div>
+    </div>
+    <div class="card">
+      <div id="qr-reader"></div>
+      <div id="scan-result" class="scan-result"></div>
+    </div>
+  </div>
+
+<script>
+  let TOKEN = null;
+  let html5QrCode = null;
+  let scanLock = false;
+
+  function callApi(action, params) {
+    // Pakai JSONP (bukan fetch) karena Apps Script tidak mengirim header CORS
+    // yang dibutuhkan browser untuk mengizinkan request lintas-domain lewat fetch.
+    // Tag <script> tidak tunduk pada aturan CORS, jadi ini cara paling stabil.
+    return new Promise(function (resolve, reject) {
+      const callbackName = 'cb_' + Math.random().toString(36).substr(2, 9);
+
+      window[callbackName] = function (data) {
+        resolve(data);
+        delete window[callbackName];
+        script.remove();
+      };
+
+      const url = API_URL
+        + '?action=' + encodeURIComponent(action)
+        + '&data=' + encodeURIComponent(JSON.stringify(params || {}))
+        + '&callback=' + callbackName;
+
+      const script = document.createElement('script');
+      script.src = url;
+      script.onerror = function () {
+        reject(new Error('Gagal memuat data dari server. Cek koneksi internet atau URL API.'));
+        delete window[callbackName];
+        script.remove();
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  window.onload = function () {
+    // Halaman ini TIDAK punya form login — token wajib dibawa dari Dashboard
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    const saved = tokenFromUrl || sessionStorage.getItem('absensi_token');
+
+    if (!saved) {
+      document.getElementById('page-noauth').classList.remove('hidden');
+      return;
+    }
+
+    callApi('checkSession', { token: saved }).then(function (res) {
+      if (res.success) {
+        TOKEN = saved;
+        sessionStorage.setItem('absensi_token', TOKEN);
+        document.getElementById('ready-user-name').innerText = res.nama;
+        document.getElementById('page-ready').classList.remove('hidden');
+      } else {
+        sessionStorage.removeItem('absensi_token');
+        document.getElementById('page-noauth').classList.remove('hidden');
+      }
+    }).catch(function () {
+      document.getElementById('page-noauth').classList.remove('hidden');
+    });
+  };
+
+  function doLogout() {
+    callApi('logout', { token: TOKEN });
+    sessionStorage.removeItem('absensi_token');
+    TOKEN = null;
+    if (html5QrCode) html5QrCode.stop().catch(function () {});
+    document.getElementById('page-app').classList.add('hidden');
+    document.getElementById('page-ready').classList.add('hidden');
+    document.getElementById('page-noauth').classList.remove('hidden');
+  }
+
+  function startScanning() {
+    document.getElementById('page-ready').classList.add('hidden');
+    document.getElementById('page-app').classList.remove('hidden');
+    document.getElementById('user-name').innerText = '👤 ' + document.getElementById('ready-user-name').innerText;
+    startScanner();
+  }
+
+  function startScanner() {
+    html5QrCode = new Html5Qrcode('qr-reader');
+    Html5Qrcode.getCameras().then(function (devices) {
+      if (devices && devices.length) {
+        const cameraId = devices[devices.length - 1].id;
+        html5QrCode.start(cameraId, { fps: 10, qrbox: 240 }, onScanSuccess);
+      }
+    }).catch(function (err) {
+      document.getElementById('scan-result').innerHTML = 'Kamera tidak dapat diakses: ' + err;
+    });
+  }
+
+  async function onScanSuccess(decodedText) {
+    if (scanLock) return;
+    scanLock = true;
+
+    const resultBox = document.getElementById('scan-result');
+    resultBox.className = 'scan-result';
+    resultBox.innerHTML = 'Memproses...';
+
+    try {
+      const res = await callApi('recordAbsensi', { token: TOKEN, qrValue: decodedText });
+      if (res.success) {
+        resultBox.className = 'scan-result success';
+        resultBox.innerHTML = '✅ ' + res.nama + ' (' + res.kelas + ')<br>Jam: ' + res.jam + ' — Status: <b>' + res.status + '</b>';
+      } else if (res.duplicate) {
+        resultBox.className = 'scan-result warning';
+        resultBox.innerHTML = '⚠️ ' + res.message;
+      } else {
+        resultBox.className = 'scan-result error';
+        resultBox.innerHTML = '❌ ' + res.message;
+      }
+    } catch (err) {
+      resultBox.className = 'scan-result error';
+      resultBox.innerHTML = '❌ Gagal menghubungi server: ' + err.message;
+    }
+    setTimeout(function () { scanLock = false; }, 2000);
+  }
+</script>
+</body>
+</html>
