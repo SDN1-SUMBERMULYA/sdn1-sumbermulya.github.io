@@ -279,14 +279,11 @@
     Html5Qrcode.getCameras().then(function (devices) {
       if (devices && devices.length) {
         const cameraId = devices[devices.length - 1].id;
-        html5QrCode.start(cameraId,{
-          fps: 10,
-          qrbox: { width: 250, height: 250 }
-        }, onScanSuccess).then(() => {
-          console.log("Scanner aktif");
-        }).catch(err => {
-          console.log(err);
-        });
+        html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).then(() => {
+    console.log("Scanner aktif");
+}).catch(function (err) {
+    console.log(err);
+});
       }
     }).catch(function (err) {
       document.getElementById('scan-result').innerHTML = 'Kamera tidak dapat diakses: ' + err;
