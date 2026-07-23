@@ -202,70 +202,70 @@
   let html5QrCode = null;
   let scanLock = false;
 
-  // function callApi(action, params) {
-  //   // Pakai JSONP (bukan fetch) karena Apps Script tidak mengirim header CORS
-  //   // yang dibutuhkan browser untuk mengizinkan request lintas-domain lewat fetch.
-  //   // Tag <script> tidak tunduk pada aturan CORS, jadi ini cara paling stabil.
-  //   return new Promise(function (resolve, reject) {
-  //     const callbackName = 'cb_' + Math.random().toString(36).substr(2, 9);
+  function callApi(action, params) {
+    // Pakai JSONP (bukan fetch) karena Apps Script tidak mengirim header CORS
+    // yang dibutuhkan browser untuk mengizinkan request lintas-domain lewat fetch.
+    // Tag <script> tidak tunduk pada aturan CORS, jadi ini cara paling stabil.
+    return new Promise(function (resolve, reject) {
+      const callbackName = 'cb_' + Math.random().toString(36).substr(2, 9);
 
-  //     window[callbackName] = function (data) {
-  //       resolve(data);
-  //       delete window[callbackName];
-  //       script.remove();
-  //     };
+      window[callbackName] = function (data) {
+        resolve(data);
+        delete window[callbackName];
+        script.remove();
+      };
 
-  //     const url = API_URL
-  //       + '?action=' + encodeURIComponent(action)
-  //       + '&data=' + encodeURIComponent(JSON.stringify(params || {}))
-  //       + '&callback=' + callbackName;
+      const url = API_URL
+        + '?action=' + encodeURIComponent(action)
+        + '&data=' + encodeURIComponent(JSON.stringify(params || {}))
+        + '&callback=' + callbackName;
 
-  //     const script = document.createElement('script');
-  //     script.src = url;
-  //     script.onerror = function () {
-  //       reject(new Error('Gagal memuat data dari server. Cek koneksi internet atau URL API.'));
-  //       delete window[callbackName];
-  //       script.remove();
-  //     };
-  //     document.body.appendChild(script);
-  //   });
-  // }
+      const script = document.createElement('script');
+      script.src = url;
+      script.onerror = function () {
+        reject(new Error('Gagal memuat data dari server. Cek koneksi internet atau URL API.'));
+        delete window[callbackName];
+        script.remove();
+      };
+      document.body.appendChild(script);
+    });
+  }
 
-  // window.onload = function () {
-  //   // Halaman ini TIDAK punya form login — token wajib dibawa dari Dashboard
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const tokenFromUrl = urlParams.get('token');
-  //   const saved = tokenFromUrl || sessionStorage.getItem('absensi_token');
+  window.onload = function () {
+    // Halaman ini TIDAK punya form login — token wajib dibawa dari Dashboard
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    const saved = tokenFromUrl || sessionStorage.getItem('absensi_token');
 
-  //   if (!saved) {
-  //     document.getElementById('page-noauth').classList.remove('hidden');
-  //     return;
-  //   }
+    if (!saved) {
+      document.getElementById('page-noauth').classList.remove('hidden');
+      return;
+    }
 
-  //   callApi('checkSession', { token: saved }).then(function (res) {
-  //     if (res.success) {
-  //       TOKEN = saved;
-  //       sessionStorage.setItem('absensi_token', TOKEN);
-  //       document.getElementById('ready-user-name').innerText = res.nama;
-  //       document.getElementById('page-ready').classList.remove('hidden');
-  //     } else {
-  //       sessionStorage.removeItem('absensi_token');
-  //       document.getElementById('page-noauth').classList.remove('hidden');
-  //     }
-  //   }).catch(function () {
-  //     document.getElementById('page-noauth').classList.remove('hidden');
-  //   });
-  // };
+    callApi('checkSession', { token: saved }).then(function (res) {
+      if (res.success) {
+        TOKEN = saved;
+        sessionStorage.setItem('absensi_token', TOKEN);
+        document.getElementById('ready-user-name').innerText = res.nama;
+        document.getElementById('page-ready').classList.remove('hidden');
+      } else {
+        sessionStorage.removeItem('absensi_token');
+        document.getElementById('page-noauth').classList.remove('hidden');
+      }
+    }).catch(function () {
+      document.getElementById('page-noauth').classList.remove('hidden');
+    });
+  };
 
-  // function doLogout() {
-  //   callApi('logout', { token: TOKEN });
-  //   sessionStorage.removeItem('absensi_token');
-  //   TOKEN = null;
-  //   if (html5QrCode) html5QrCode.stop().catch(function () {});
-  //   document.getElementById('page-app').classList.add('hidden');
-  //   document.getElementById('page-ready').classList.add('hidden');
-  //   document.getElementById('page-noauth').classList.remove('hidden');
-  // }
+  function doLogout() {
+    callApi('logout', { token: TOKEN });
+    sessionStorage.removeItem('absensi_token');
+    TOKEN = null;
+    if (html5QrCode) html5QrCode.stop().catch(function () {});
+    document.getElementById('page-app').classList.add('hidden');
+    document.getElementById('page-ready').classList.add('hidden');
+    document.getElementById('page-noauth').classList.remove('hidden');
+  }
 
   function startScanning() {
     document.getElementById('page-ready').classList.add('hidden');
