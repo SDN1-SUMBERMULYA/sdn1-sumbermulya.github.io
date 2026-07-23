@@ -6,12 +6,33 @@
 <title>Scan Absensi QR Siswa</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
+  :root {
+    --excel-green-dark: #1D6B35;
+    --excel-green: #217346;
+    --excel-green-light: #2E8B57;
+    --excel-green-pale: #E2EFDA;
+    --excel-green-hover: #185A2C;
+    --excel-green-header: #217346;
+    --excel-border: #D6DCE4;
+    --excel-row-alt: #F2F2F2;
+    --excel-row-hover: #D9E2F3;
+    --excel-white: #FFFFFF;
+    --excel-text: #333333;
+    --excel-text-muted: #666666;
+    --excel-formula-bar: #E8E8E8;
+    --excel-tab-active: #FFFFFF;
+    --excel-tab-inactive: #D4DCE5;
+    --excel-danger: #C0392B;
+    --excel-warning: #E67E22;
+    --excel-info: #2980B9;
+  }
+
   * { box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', Roboto, Arial, sans-serif;
     margin: 0;
-    background: #f2f4f7;
-    color: #202124;
+    background: var(--excel-row-alt);
+    color: var(--excel-text);
   }
   .hidden { display: none !important; }
   .center-page {
@@ -19,43 +40,121 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #4285F4, #34A853);
+    background: linear-gradient(135deg, var(--excel-green-dark), var(--excel-green-light));
   }
   .card {
-    background: white;
+    background: var(--excel-white);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     margin: 16px;
   }
-  .login-card { width: 320px; text-align: center; }
-  .login-card h2 { margin-bottom: 4px; }
-  .subtitle { color: #5f6368; font-size: 13px; margin-bottom: 16px; }
+  .login-card {
+    width: 320px;
+    text-align: center;
+    border-top: 4px solid var(--excel-green);
+  }
+  .login-card h2 {
+    margin-bottom: 4px;
+    color: var(--excel-green-dark);
+  }
+  .subtitle {
+    color: var(--excel-text-muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
   input {
-    width: 100%; padding: 10px; margin: 6px 0;
-    border: 1px solid #dadce0; border-radius: 8px; font-size: 14px;
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: 1px solid var(--excel-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--excel-white);
+    color: var(--excel-text);
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--excel-green);
+    box-shadow: 0 0 0 2px var(--excel-green-pale);
   }
   button {
-    width: 100%; padding: 10px; margin-top: 8px;
-    background: #4285F4; color: white; border: none;
-    border-radius: 8px; font-size: 14px; cursor: pointer;
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: var(--excel-green);
+    color: var(--excel-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
   }
-  button:hover { background: #3367d6; }
-  .error-msg { color: #d93025; font-size: 13px; margin-top: 8px; min-height: 16px; }
+  button:hover { background: var(--excel-green-hover); }
+  button:active { transform: translateY(1px); }
+  .btn-danger {
+    background: var(--excel-danger);
+  }
+  .btn-danger:hover { background: #962d22; }
+  .error-msg {
+    color: var(--excel-danger);
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 16px;
+  }
   .topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    background: white; padding: 12px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--excel-green-header);
+    color: var(--excel-white);
+    padding: 12px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
   }
   .topbar-title { font-weight: bold; font-size: 16px; }
-  .btn-small { width: auto; padding: 6px 12px; font-size: 12px; background: #ea4335; }
-  #qr-reader { width: 100%; max-width: 400px; margin: 12px auto; }
-  .scan-result {
-    text-align: center; padding: 16px; margin-top: 10px;
-    border-radius: 8px; font-size: 15px; min-height: 20px;
+  .topbar span { color: var(--excel-green-pale); margin-right: 8px; }
+  .btn-small {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+    background: var(--excel-danger);
+    margin-left: 4px;
   }
-  .scan-result.success { background: #e6f4ea; color: #137333; }
-  .scan-result.error { background: #fce8e6; color: #c5221f; }
-  .scan-result.warning { background: #fef7e0; color: #b06000; }
+  .btn-small.btn-info {
+    background: var(--excel-info);
+  }
+  .btn-small.btn-info:hover { background: #1f6391; }
+  #qr-reader {
+    width: 100%;
+    max-width: 400px;
+    margin: 12px auto;
+    border: 2px solid var(--excel-border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .scan-result {
+    text-align: center;
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-size: 15px;
+    min-height: 20px;
+  }
+  .scan-result.success {
+    background: var(--excel-green-pale);
+    color: var(--excel-green-dark);
+    border: 1px solid var(--excel-green-light);
+  }
+  .scan-result.error {
+    background: #fbeae8;
+    color: var(--excel-danger);
+    border: 1px solid #e6b0aa;
+  }
+  .scan-result.warning {
+    background: #fdf2e3;
+    color: var(--excel-warning);
+    border: 1px solid #f3d3a6;
+  }
 </style>
 </head>
 <body>
@@ -79,7 +178,7 @@
       <h2>📷 Scan Absensi</h2>
       <p class="subtitle">Login sebagai <b id="ready-user-name"></b></p>
       <button onclick="startScanning()">Mulai Scan</button>
-      <button style="background:#ea4335; margin-top:6px;" onclick="doLogout()">Keluar</button>
+      <button class="btn-danger" style="margin-top:6px;" onclick="doLogout()">Keluar</button>
     </div>
   </div>
 
@@ -88,7 +187,7 @@
       <div class="topbar-title">📷 Scan Absensi</div>
       <div>
         <span id="user-name"></span>
-        <button class="btn-small" style="background:#4285F4;" onclick="window.location.href=DASHBOARD_URL">Dashboard</button>
+        <button class="btn-small btn-info" onclick="window.location.href=DASHBOARD_URL">Dashboard</button>
         <button class="btn-small" onclick="doLogout()">Keluar</button>
       </div>
     </div>
