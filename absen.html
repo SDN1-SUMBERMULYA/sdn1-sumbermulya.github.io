@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Scan Absensi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* CSS tambahan untuk animasi transisi halaman */
+    .page { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+    .page.active { display: flex; opacity: 1; }
+    .page-block.active { display: block; opacity: 1; }
+    
+    /* Menambahkan sedikit gaya untuk container scanner jika script QR belum berjalan */
+    #qr-reader {
+      width: 100%;
+      min-height: 300px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8fafc;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen">
+
+  <!-- KONFIGURASI: ganti URL ini dengan Web App URL Apps Script Anda -->
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec';
+    const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec'; // biasanya sama dengan API_URL
+  </script>
+
+  <div id="page-noauth" class="page min-h-screen items-center justify-center p-4 hidden">
+    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
+      <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">Belum Login</h2>
+      <p class="text-gray-500 mb-6 text-sm leading-relaxed">
+        Halaman ini hanya bisa diakses lewat Dashboard. Silakan login dulu di sana, lalu klik "Buka Halaman Scan Absensi".
+      </p>
+      <button onclick="window.location.href=DASHBOARD_URL" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm">
+        Buka Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div id="page-ready" class="page min-h-screen items-center justify-center p-4 hidden">
+    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
+      <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">Scan Absensi</h2>
+      <p class="text-gray-500 mb-6">Login sebagai <b id="ready-user-name" class="text-gray-800"></b></p>
+      
+      <div class="flex flex-col gap-3">
+        <button onclick="startScanning()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm">
+          Mulai Scan
+        </button>
+        <button onclick="doLogout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors border border-red-700">
+          Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-app" class="page-block bg-gray-50 min-h-screen pb-10 hidden">
+    
+    <!-- Topbar -->
+    <div class="bg-green-600 shadow-sm border-b border-gray-200 px-6 py-4 flex flex-wrap gap-4 justify-between items-center sticky top-0 z-10">
+      <div class="flex items-center gap-2 text-xl font-bold text-white">
+        <i class="fas fa-camera"></i>
+        <span class="hidden sm:inline">Scan Absensi</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="user-name" class="text-sm font-medium text-white hidden md:block mr-2">Halo, Admin</span>
+        <button onclick="window.location.href=DASHBOARD_URL" class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-1.5 px-4 rounded-lg transition-colors text-sm border border-blue-100">
+          Dashboard
+        </button>
+        <button onclick="doLogout()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-1.5 px-4 rounded-lg transition-colors text-sm border border-red-700 shadow-sm">
+          Keluar
+        </button>
+      </div>
+    </div>
+
+    <!-- Konten Utama: Layout 2 Kolom -->
+    <div class="max-w-6xl mx-auto mt-8 px-4 sm:px-6">
+      <div class="flex flex-col lg:flex-row gap-6">
+        
+        <!-- KOLOM KIRI: Kamera Scanner -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-gray-800">Kamera Pemindai</h3>
+              <span class="flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+            </div>
+            
+            <!-- Tempat Scanner Berjalan -->
+            <div id="qr-reader" class="relative"></div>
+              <p id="okk" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none hidden"></p>
+              <p id="err" class="text-red-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none hidden"></p>
+            
+            <p class="text-xs text-gray-500 mt-4 text-center">Arahkan QR Code ke area kamera untuk memindai.</p>
+          </div>
+        </div>
+
+        <!-- KOLOM KANAN: Hasil Scan -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5 flex flex-col">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-3">Hasil Scan Terakhir</h3>
+            
+            <!-- Tempat Hasil Scan Ditampilkan -->
+            <div id="scan-result" class="flex-grow flex flex-col gap-3 overflow-y-auto max-h-[400px]">
+              
+              <!-- Placeholder Jika Belum Ada Hasil -->
+              <div id="empty-state" class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+                <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <p class="text-sm">Belum ada data absensi yang dipindai.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  let TOKEN = null;
+  let html5QrCode = null;
+  let scanLock = false;
+
+  function callApi(action, params) {
+    // Pakai JSONP (bukan fetch) karena Apps Script tidak mengirim header CORS
+    // yang dibutuhkan browser untuk mengizinkan request lintas-domain lewat fetch.
+    // Tag <script> tidak tunduk pada aturan CORS, jadi ini cara paling stabil.
+    return new Promise(function (resolve, reject) {
+      const callbackName = 'cb_' + Math.random().toString(36).substr(2, 9);
+
+      window[callbackName] = function (data) {
+        resolve(data);
+        delete window[callbackName];
+        script.remove();
+      };
+
+      const url = API_URL
+        + '?action=' + encodeURIComponent(action)
+        + '&data=' + encodeURIComponent(JSON.stringify(params || {}))
+        + '&callback=' + callbackName;
+
+      const script = document.createElement('script');
+      script.src = url;
+      script.onerror = function () {
+        reject(new Error('Gagal memuat data dari server. Cek koneksi internet atau URL API.'));
+        delete window[callbackName];
+        script.remove();
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  window.onload = function () {
+    // Halaman ini TIDAK punya form login — token wajib dibawa dari Dashboard
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    const saved = tokenFromUrl || sessionStorage.getItem('absensi_token');
+
+    if (!saved) {
+      document.getElementById('page-noauth').classList.remove('hidden');
+      return;
+    }
+
+    callApi('checkSession', { token: saved }).then(function (res) {
+      if (res.success) {
+        TOKEN = saved;
+        sessionStorage.setItem('absensi_token', TOKEN);
+        document.getElementById('ready-user-name').innerText = res.nama;
+        document.getElementById('page-ready').classList.remove('hidden');
+      } else {
+        sessionStorage.removeItem('absensi_token');
+        document.getElementById('page-noauth').classList.remove('hidden');
+      }
+    }).catch(function () {
+      document.getElementById('page-noauth').classList.remove('hidden');
+    });
+  };
+
+  function doLogout() {
+    callApi('logout', { token: TOKEN });
+    sessionStorage.removeItem('absensi_token');
+    TOKEN = null;
+    if (html5QrCode) html5QrCode.stop().catch(function () {});
+    document.getElementById('page-app').classList.add('hidden');
+    document.getElementById('page-ready').classList.add('hidden');
+    document.getElementById('page-noauth').classList.remove('hidden');
+  }
+
+  function startScanning() {
+    document.getElementById('page-ready').classList.add('hidden');
+    document.getElementById('page-app').classList.remove('hidden');
+    document.getElementById('user-name').innerText = '👤 ' + document.getElementById('ready-user-name').innerText;
+    startScanner();
+  }
+
+  function startScanner() {
+    html5QrCode = new Html5Qrcode('qr-reader');
+    Html5Qrcode.getCameras().then(function (devices) {
+      if (devices && devices.length) {
+        const cameraId = devices[devices.length - 1].id;
+        html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).then(() => {
+        document.getElementById('okk').classList.remove('hidden');
+        document.getElementById('err').classList.add('hidden');
+        document.getElementById('okk').innerHTML = 'Scanner Aktif';
+        }).catch(function (err) {
+            console.log(err);
+        });
+      }
+    }).catch(function (err) {
+      document.getElementById('okk').classList.add('hidden');
+      document.getElementById('err').classList.remove('hidden');
+      document.getElementById('err').innerHTML = 'Kamera tidak dapat diakses: ' + err;
+    });
+  }
+
+  async function onScanSuccess(decodedText) {
+    if (scanLock) return;
+    scanLock = true;
+
+    const resultBox = document.getElementById('scan-result');
+    resultBox.className = 'scan-result';
+    resultBox.innerHTML = 'Memproses...';
+
+    try {
+      const res = await callApi('recordAbsensi', { token: TOKEN, qrValue: decodedText });
+      if (res.success) {
+        resultBox.className = 'scan-result success';
+        resultBox.innerHTML = '✅ ' + res.nama + ' (' + res.kelas + ')<br>Jam: ' + res.jam + ' — Status: <b>' + res.status + '</b>';
+      } else if (res.duplicate) {
+        resultBox.className = 'scan-result warning';
+        resultBox.innerHTML = '⚠️ ' + res.message;
+      } else {
+        resultBox.className = 'scan-result error';
+        resultBox.innerHTML = '❌ ' + res.message;
+      }
+    } catch (err) {
+      resultBox.className = 'scan-result error';
+      resultBox.innerHTML = '❌ Gagal menghubungi server: ' + err.message;
+    }
+    setTimeout(function () { scanLock = false; }, 2000);
+  }
+</script>
+</body>
+</html>
