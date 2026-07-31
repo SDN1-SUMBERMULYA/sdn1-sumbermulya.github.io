@@ -98,7 +98,7 @@
         <div class="w-full lg:w-1/2 flex flex-col">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-gray-800">Kamera Pemindai</h3>
+              <h3 class="text-lg font-bold text-gray-800">Scan QR</h3>
               <span class="flex h-3 w-3">
                 <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -117,7 +117,7 @@
         <!-- KOLOM KANAN: Hasil Scan -->
         <div class="w-full lg:w-1/2 flex flex-col">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5 flex flex-col">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-3">Hasil Scan Terakhir</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-3">Hasil Scan</h3>
             
             <!-- Tempat Hasil Scan Ditampilkan -->
             <div id="scan-result" class="flex-grow flex flex-col gap-3 overflow-y-auto max-h-[400px]">
@@ -233,31 +233,52 @@
     });
   }
 
+  
   async function onScanSuccess(decodedText) {
-    if (scanLock) return;
-    scanLock = true;
+      if (scanLock) return;
+      scanLock = true;
 
-    const resultBox = document.getElementById('scan-result');
-    resultBox.className = 'scan-result';
-    resultBox.innerHTML = 'Memproses...';
+      const resultBox = document.getElementById('scan-result');
 
-    try {
-      const res = await callApi('recordAbsensi', { token: TOKEN, qrValue: decodedText });
-      if (res.success) {
-        resultBox.className = 'scan-result success';
-        resultBox.innerHTML = '✅ ' + res.nama + ' (' + res.kelas + ')<br>Jam: ' + res.jam + ' — Status: <b>' + res.status + '</b>';
-      } else if (res.duplicate) {
-        resultBox.className = 'scan-result warning';
-        resultBox.innerHTML = '⚠️ ' + res.message;
-      } else {
-        resultBox.className = 'scan-result error';
-        resultBox.innerHTML = '❌ ' + res.message;
+      try {
+          const res = await callApi('recordAbsensi', {
+              token: TOKEN,
+              qrValue: decodedText
+          });
+
+          let html = "";
+
+          if (res.success) {
+              html = `
+                  <div class="scan-result success">
+                      ✅ ${res.nama} (${res.kelas})<br>
+                      Jam: ${res.jam} — Status: <b>${res.status}</b>
+                  </div>`;
+          } else if (res.duplicate) {
+              html = `
+                  <div class="scan-result warning">
+                      ⚠️ ${res.message}
+                  </div>`;
+          } else {
+              html = `
+                  <div class="scan-result error">
+                      ❌ ${res.message}
+                  </div>`;
+          }
+
+          resultBox.insertAdjacentHTML("afterbegin", html);
+
+      } catch (err) {
+          resultBox.insertAdjacentHTML("afterbegin", `
+              <div class="scan-result error">
+                  ❌ Gagal menghubungi server: ${err.message}
+              </div>
+          `);
       }
-    } catch (err) {
-      resultBox.className = 'scan-result error';
-      resultBox.innerHTML = '❌ Gagal menghubungi server: ' + err.message;
-    }
-    setTimeout(function () { scanLock = false; }, 2000);
+
+      setTimeout(() => {
+          scanLock = false;
+      }, 2000);
   }
 </script>
 </body>
