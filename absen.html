@@ -21,17 +21,10 @@
   </script>
 
   <style>
-    /* CSS tambahan untuk animasi transisi halaman */
-    .page { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
-    .page.active { display: flex; opacity: 1; }
-    .page-block.active { display: block; opacity: 1; }
-    
-    /* Menambahkan sedikit gaya untuk container scanner jika script QR belum berjalan */
     #qr-reader {
       width: 100%;
       min-height: 300px;
-      border: 2px dashed #cbd5e1;
-      border-radius: 0.75rem;
+      border: 1px dashed #16a34a;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -48,7 +41,7 @@
     const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec'; // biasanya sama dengan API_URL
   </script>
 
-  <div id="page-noauth" class="page min-h-screen items-center justify-center p-4 hidden">
+  <div id="page-noauth" class="flex min-h-screen items-center justify-center p-4 hidden">
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
       <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Belum Login</h2>
@@ -61,7 +54,7 @@
     </div>
   </div>
 
-  <div id="page-ready" class="page min-h-screen items-center justify-center p-4 hidden">
+  <div id="page-ready" class="flex min-h-screen items-center justify-center p-4 hidden">
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
       <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Scan Absensi</h2>
