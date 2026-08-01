@@ -279,6 +279,7 @@ async function onScanSuccess(decodedText) {
                   </div>
                 </div>`;
         } else if (res.duplicate) {
+          console.log(res.message);
             html = `
                 <div class="bg-yellow-100 border border-yellow-200 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
                   <div class="flex items-center gap-2">
