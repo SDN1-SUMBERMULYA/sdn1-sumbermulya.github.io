@@ -232,9 +232,7 @@
       document.getElementById('err').innerHTML = 'Kamera tidak dapat diakses: ' + err;
     });
   }
-
-  
-  async function onScanSuccess(decodedText) {
+async function onScanSuccess(decodedText) {
     if (scanLock) return;
     scanLock = true;
 
@@ -245,8 +243,8 @@
     
     // Tampilkan indikator loading sebelum memanggil API
     resultBox.insertAdjacentHTML("afterbegin", `
-        <div id="${loadingId}" class="scan-result loading">
-            <i class="fa fa-spinner"></i> Memproses data...
+        <div id="${loadingId}" class="bg-green-50 rounded p-4 flex justify-center items-center animate-[pulse_0.5s_ease-in-out]">
+          <div class="font-sans text-gray-800"><i class="fa fa-spinner animate-spin"></i> Memproses data...</div>
         </div>
     `);
 
@@ -255,8 +253,7 @@
             token: TOKEN,
             qrValue: decodedText
         });
-      
-        console.log(res);
+        document.getElementById('empty-state').classList.add('hidden');
 
         // Hapus elemen loading setelah server merespons
         const loadingEl = document.getElementById(loadingId);
@@ -266,25 +263,46 @@
 
         if (res.success) {
             html = `
-                <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
-                  <div>
-                    <p class="font-bold text-gray-800">${res.nama}</p>
-                    <p class="text-xs text-gray-500">${res.kelas}</p>
+                <div class="bg-green-100 border border-green-200 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-green-900 border-2 border-green-900 flex h-8 items-center justify-center rounded-full w-8">
+                      <i class="fa fa-check text-white font-bold"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold text-green-900">${res.nama}</p>
+                      <p class="text-xs">Kelas: ${res.kelas}</p>
+                    </div>
                   </div>
                   <div class="text-right">
-                    <span class="inline-block bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md mb-1">${res.status}</span>
-                    <p class="text-xs text-gray-500">${res.jam}</p>
+                    <span class="inline-block bg-green-900 text-white text-xs font-bold px-2 py-1 rounded-md mb-1">${res.status}</span>
+                    <p class="text-xs">${res.jam}</p>
                   </div>
                 </div>`;
         } else if (res.duplicate) {
             html = `
-                <div class="scan-result warning">
-                    ⚠️ ${res.message}
+                <div class="bg-yellow-100 border border-yellow-200 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-yellow-900 border-2 border-yellow-900 flex h-8 items-center justify-center rounded-full w-8">
+                      <i class="fa fa-triangle-exclamation text-white font-bold"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold text-yellow-900">${res.message.nama}</p>
+                      <p class="text-xs">${res.message.pesan}</p>
+                    </div>
+                  </div>
                 </div>`;
         } else {
             html = `
-                <div class="scan-result error">
-                    ❌ ${res.message}
+                <div class="bg-red-200 border border-red-300 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-red-900 border-2 border-red-900 flex h-8 items-center justify-center rounded-full w-8">
+                      <i class="fa fa-xmark text-white font-bold"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold text-red-900">Terjadi kesalahan!</p>
+                      <p class="text-xs">${res.message}</p>
+                    </div>
+                  </div>
                 </div>`;
         }
 
@@ -296,9 +314,17 @@
         if (loadingEl) loadingEl.remove();
 
         resultBox.insertAdjacentHTML("afterbegin", `
-            <div class="scan-result error">
-                ❌ Gagal menghubungi server: ${err.message}
-            </div>
+            <div class="bg-red-200 border border-red-300 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
+                  <div class="flex items-center gap-2">
+                    <div class="bg-red-900 border-2 border-red-900 flex h-8 items-center justify-center rounded-full w-8">
+                      <i class="fa fa-xmark text-white font-bold"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold text-red-900">Gagal menghubungi server!</p>
+                      <p class="text-xs">${res.message}</p>
+                    </div>
+                  </div>
+                </div>
         `);
     }
 
