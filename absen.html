@@ -34,12 +34,21 @@
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen">
-
   <!-- KONFIGURASI: ganti URL ini dengan Web App URL Apps Script Anda -->
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec';
     const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbxUofCSGICxxM3tQnNTYcEevWGsKR7F4NICk_orYwyJRmyNis8ODa1h8EsqJCjsguRF/exec'; // biasanya sama dengan API_URL
   </script>
+<!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 flex flex-col items-center justify-center bg-slate-900">
+        <div class="w-24 h-24 rounded-full bg-green-800 flex items-center justify-center animate-pulse shadow-2xl">
+            <span class="text-white text-3xl font-bold">QR</span>
+        </div>
+
+        <div class="mt-8 w-64 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div class="h-full w-1/2 bg-green-800 animate-[loading_2s_linear_infinite]"></div>
+        </div>
+    </div>
 
   <div id="page-noauth" class="flex min-h-screen items-center justify-center p-4 hidden">
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
@@ -178,12 +187,15 @@
         TOKEN = saved;
         sessionStorage.setItem('absensi_token', TOKEN);
         document.getElementById('ready-user-name').innerText = res.nama;
+        document.getElementById('loader').classList.add('hidden');
         document.getElementById('page-ready').classList.remove('hidden');
       } else {
         sessionStorage.removeItem('absensi_token');
+        document.getElementById('loader').classList.add('hidden');
         document.getElementById('page-noauth').classList.remove('hidden');
       }
     }).catch(function () {
+      document.getElementById('loader').classList.add('hidden');
       document.getElementById('page-noauth').classList.remove('hidden');
     });
   };
@@ -193,6 +205,7 @@
     sessionStorage.removeItem('absensi_token');
     TOKEN = null;
     if (html5QrCode) html5QrCode.stop().catch(function () {});
+    document.getElementById('loader').classList.add('hidden');
     document.getElementById('page-app').classList.add('hidden');
     document.getElementById('page-ready').classList.add('hidden');
     document.getElementById('page-noauth').classList.remove('hidden');
