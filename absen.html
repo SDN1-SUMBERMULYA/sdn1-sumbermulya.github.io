@@ -97,18 +97,10 @@
         <!-- KOLOM KIRI: Kamera Scanner -->
         <div class="w-full lg:w-1/2 flex flex-col">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-gray-800">Scan QR</h3>
-              <span class="flex h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-              </span>
-            </div>
             
             <!-- Tempat Scanner Berjalan -->
             <div id="qr-reader" class="relative"></div>
-              <p id="okk" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none hidden"></p>
-              <p id="err" class="text-red-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none hidden"></p>
+              <p id="msg" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none"><i class="fa fa-check"></i><span> Ready</span></p>
             
             <p class="text-xs text-gray-500 mt-4 text-center">Arahkan QR Code ke area kamera untuk memindai.</p>
           </div>
@@ -117,7 +109,7 @@
         <!-- KOLOM KANAN: Hasil Scan -->
         <div class="w-full lg:w-1/2 flex flex-col">
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex-grow p-5 flex flex-col">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-3">Hasil Scan</h3>
+            <h3 class="font-bold mb-4 border-b">Hasil Scan</h3>
             
             <!-- Tempat Hasil Scan Ditampilkan -->
             <div id="scan-result" class="flex-grow flex flex-col gap-3 overflow-y-auto max-h-[400px]">
@@ -215,21 +207,25 @@
 
   function startScanner() {
     html5QrCode = new Html5Qrcode('qr-reader');
+    const msg = document.getElementById("msg");
+    const icon = msg.querySelector("i");
+    const text = msg.querySelector("span");
     Html5Qrcode.getCameras().then(function (devices) {
       if (devices && devices.length) {
         const cameraId = devices[devices.length - 1].id;
         html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).then(() => {
-        document.getElementById('okk').classList.remove('hidden');
-        document.getElementById('err').classList.add('hidden');
-        document.getElementById('okk').innerHTML = 'Scanner Aktif';
+        icon.className = "fa fa-circle animate-ping";
+        text.textContent = " Scanner Aktif";
+
         }).catch(function (err) {
             console.log(err);
+            icon.className = "fa fa-xmark";
+            text.textContent = " Terjadi kesalahan, " + err;
         });
       }
     }).catch(function (err) {
-      document.getElementById('okk').classList.add('hidden');
-      document.getElementById('err').classList.remove('hidden');
-      document.getElementById('err').innerHTML = 'Kamera tidak dapat diakses: ' + err;
+      icon.className = "fa fa-xmark";
+      text.textContent = " Kamera tidak dapat diakses. " + err;
     });
   }
 async function onScanSuccess(decodedText) {
@@ -279,7 +275,6 @@ async function onScanSuccess(decodedText) {
                   </div>
                 </div>`;
         } else if (res.duplicate) {
-          console.log(res.message);
             html = `
                 <div class="bg-yellow-100 border border-yellow-200 rounded-xl py-1 px-4 flex justify-between items-center animate-[pulse_0.5s_ease-in-out]">
                   <div class="flex items-center gap-2">
@@ -331,7 +326,7 @@ async function onScanSuccess(decodedText) {
 
     setTimeout(() => {
         scanLock = false;
-    }, 2000);
+    }, 5000);
 }
 </script>
 </body>
