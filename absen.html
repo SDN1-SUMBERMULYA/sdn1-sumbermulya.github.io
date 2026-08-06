@@ -221,22 +221,25 @@
 
         }).catch(function (err) {
             console.log(err);
-            icon.className = "fa fa-xmark";
+            icon.className = "basis-5 fa fa-xmark";
             text.textContent = " Terjadi kesalahan, " + err;
             msg.classList.add('text-red-700');
             msg.classList.remove('text-green-700');
         });
       }
     }).catch(function (err) {
-      icon.className = "fa fa-xmark";
+      icon.className = "basis-5 fa fa-xmark";
       text.textContent = " Kamera tidak dapat diakses. " + err;
       msg.classList.add('text-red-700');
       msg.classList.remove('text-green-700');
     });
   }
+const beepSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 async function onScanSuccess(decodedText) {
     if (scanLock) return;
     scanLock = true;
+    beepSound.currentTime = 0;
+    beepSound.play().catch(err => console.log(err));
 
     const resultBox = document.getElementById('scan-result');
     
