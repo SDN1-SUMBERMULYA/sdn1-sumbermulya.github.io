@@ -44,7 +44,7 @@
   <div id="page-noauth" class="flex min-h-screen items-center justify-center p-4 hidden">
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
       <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">Anda Belum Login</h2>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">Belum Login</h2>
       <p class="text-gray-500 mb-6 text-sm leading-relaxed">
         Halaman ini hanya bisa diakses lewat Dashboard. Silakan login dulu di sana, lalu klik "Buka Halaman Scan Absensi".
       </p>
@@ -100,7 +100,7 @@
             
             <!-- Tempat Scanner Berjalan -->
             <div id="qr-reader" class="relative"></div>
-              <p id="msg" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none"><i class="fa fa-check"></i><span> Ready</span></p>
+              <div id="msg" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none"><i class="basis-5 fa fa-check"></i><span> Ready</span></div>
             
             <p class="text-xs text-gray-500 mt-4 text-center">Arahkan QR Code ke area kamera untuk memindai.</p>
           </div>
@@ -214,18 +214,24 @@
       if (devices && devices.length) {
         const cameraId = devices[devices.length - 1].id;
         html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).then(() => {
-        icon.className = "fa fa-circle animate-ping";
+        icon.className = "basis-5 fa fa-circle animate-ping";
         text.textContent = " Scanner Aktif";
+        msg.classList.remove('text-red-700');
+        msg.classList.add('text-green-700');
 
         }).catch(function (err) {
             console.log(err);
             icon.className = "fa fa-xmark";
             text.textContent = " Terjadi kesalahan, " + err;
+            msg.classList.add('text-red-700');
+            msg.classList.remove('text-green-700');
         });
       }
     }).catch(function (err) {
       icon.className = "fa fa-xmark";
       text.textContent = " Kamera tidak dapat diakses. " + err;
+      msg.classList.add('text-red-700');
+      msg.classList.remove('text-green-700');
     });
   }
 async function onScanSuccess(decodedText) {
