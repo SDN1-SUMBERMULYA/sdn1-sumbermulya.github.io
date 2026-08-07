@@ -49,7 +49,7 @@
             <div class="h-full w-1/2 bg-green-800 animate-[loading_2s_linear_infinite]"></div>
         </div>
     </div>
-
+    <style>@keyframes loading {0% { transform: translateX(-100%); }100% { transform: translateX(300%); }}</style>
   <div id="page-noauth" class="flex min-h-screen items-center justify-center p-4 hidden">
     <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-md w-full text-center">
       <div class="text-4xl mb-4"><i class="fas fa-camera text-4xl"></i></div>
@@ -109,7 +109,7 @@
             
             <!-- Tempat Scanner Berjalan -->
             <div id="qr-reader" class="relative"></div>
-              <div id="msg" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none"><i class="basis-5 fa fa-spin fa-spiner"></i><span> Loading</span></div>
+              <div id="msg" class="text-green-700 mt-4 text-xs text-center inset-0 flex items-center justify-center pointer-events-none"><i class="basis-5 fa fa-spinner animate-spin"></i><span> Loading</span></div>
             
             <p class="text-xs text-gray-500 mt-4 text-center">Arahkan QR Code ke area kamera untuk memindai.</p>
           </div>
